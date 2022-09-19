@@ -18,16 +18,21 @@ import '@ionic/react/css/display.css';
 
 /* Theme variables */
 import './theme/variables.css';
+
+import { useAuth } from './supabase';
+
 import Authenticated from './Authenticated';
+import Login from './pages/Login';
 
 setupIonicReact();
 
 const App: React.FC = () => {
-
+  const { user } = useAuth()
+  console.log(user)
   return (
-  <IonApp>
-    <Authenticated />
-  </IonApp>
+    <IonApp>
+      { user ? <Authenticated /> : <Login />}
+    </IonApp>
 )};
 
 export default App;
