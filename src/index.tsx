@@ -5,13 +5,16 @@ import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 import reportWebVitals from './reportWebVitals';
 
 import { AuthProvider } from './supabase/auth';
+import { FeldbuchProvider } from './supabase/feldbuch';
 
 const container = document.getElementById('root');
 const root = createRoot(container!);
 root.render(
   <React.StrictMode>
     <AuthProvider>
-      <App />
+      <FeldbuchProvider>
+        <App />
+      </FeldbuchProvider>
     </AuthProvider>
   </React.StrictMode>
 );
