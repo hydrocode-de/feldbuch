@@ -4,7 +4,7 @@ import App from './App';
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 import reportWebVitals from './reportWebVitals';
 
-import { AuthProvider } from './supabase';
+import { AuthProvider } from './supabase/auth';
 
 const container = document.getElementById('root');
 const root = createRoot(container!);
