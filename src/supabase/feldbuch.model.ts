@@ -12,3 +12,9 @@ export interface Plot {
     created_at: Date,
     wkt: string,
 }
+
+export interface Dataset {
+    plot_id: number,
+    type: 'g1' | 'g2' | 'g3' | 'g4',
+    [key: string]: Date | number | string;
+}

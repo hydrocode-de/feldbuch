@@ -3,7 +3,7 @@ import { getItem, setItem } from 'localforage';
 import isEqual from 'lodash.isequal';
 import cloneDeep from 'lodash.clonedeep';
 
-import { Plot } from "./feldbuch.model";
+import { Plot, Dataset } from "./feldbuch.model";
 import { supabase } from './supabase';
 import { useAuth } from "./auth";
 
@@ -11,17 +11,12 @@ interface Checksum {
     [table: string]: string | null
 }
 
-export interface Dataset {
-    plot_id: number,
-    type: 'g1' | 'g2' | 'g3' | 'g4',
-    [key: string]: Date | number | string;
-}
-
 interface FeldbuchState {
     dirty: boolean,
     synced: boolean,
     plots: Plot[],
-    datasets: any[]
+    datasets: any[],
+    checkSyncState: () => void,
     sync?: () => void,
     addDataset?: (data: Dataset) => void
 }
@@ -30,7 +25,8 @@ const initialState: FeldbuchState = {
     dirty: true,
     synced: false,
     plots: [],
-    datasets: []
+    datasets: [],
+    checkSyncState: () => console.log('FeldbuchProvider not initialized!')
 }
 
 // create the context
@@ -118,6 +114,11 @@ export const FeldbuchProvider: React.FC<React.PropsWithChildren> = ({ children }
     }, [user]);
 
     // create context functions
+
+    const checkSyncState = (): boolean => {
+
+    }
+
     const sync = () => {
         // create a sync planner
         const toSync = {
@@ -187,6 +188,7 @@ export const FeldbuchProvider: React.FC<React.PropsWithChildren> = ({ children }
         synced: synced,
         plots: plots,
         datasets: datasets,
+        checkSyncState: checkSyncState,
         sync: sync,
         addDataset: addDataset
     }
