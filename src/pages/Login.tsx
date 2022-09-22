@@ -5,16 +5,14 @@ import { useAuth } from "../supabase/auth";
 const Login: React.FC = () => {
     // some state
     const [username, setUsername] = useState<string>('');
-    const [password, setPassword] = useState<string>('');
 
     const { login } = useAuth();
 
     const onLogin = () => {
-        login!({email: username, password: password})
+        login!({email: username})
         .then(value => console.log(value))
         .catch(error => {
             console.log(error);
-            setPassword('');
         });
     }
     return (
@@ -24,11 +22,7 @@ const Login: React.FC = () => {
                     <IonLabel>e-mail</IonLabel>
                     <IonInput type="text" value={username} onIonChange={e => setUsername(e.target.value as string?? '')}/>
                 </IonItem>
-                <IonItem>
-                    <IonLabel>password</IonLabel>
-                    <IonInput type="password" value={password} onIonChange={e => setPassword(e.target.value as string?? '')} />
-                </IonItem>
-                <IonButton disabled={username === '' || password === '' || !login} onClick={onLogin}>LOGIN</IonButton>
+                <IonButton disabled={username === '' || !login} expand="full" onClick={onLogin}>Request Link</IonButton>
                 <IonButton disabled onClick={() => login!({provider: 'github'}).then(v => console.log(v)).catch(e => console.log(e))}>Login with Github</IonButton>
             </IonContent>
         </IonPage>

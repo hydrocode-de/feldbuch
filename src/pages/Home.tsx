@@ -2,6 +2,7 @@ import MessageListItem from '../components/MessageListItem';
 import { useState } from 'react';
 import { Message, getMessages } from '../data/messages';
 import {
+  IonButton,
   IonContent,
   IonHeader,
   IonList,
@@ -14,9 +15,13 @@ import {
 } from '@ionic/react';
 import './Home.css';
 
+import { useFeldbuch } from '../supabase/feldbuch';
+
 const Home: React.FC = () => {
 
   const [messages, setMessages] = useState<Message[]>([]);
+
+  const { checkSyncState, synced } = useFeldbuch();
 
   useIonViewWillEnter(() => {
     const msgs = getMessages();
@@ -34,6 +39,9 @@ const Home: React.FC = () => {
       <IonHeader>
         <IonToolbar>
           <IonTitle>Inbox</IonTitle>
+          <IonButton slot="end" onClick={() => checkSyncState().then(v => console.log(v)).catch(e => console.log(e))}>
+            { synced }
+          </IonButton>
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>

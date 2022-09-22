@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from "react"
-import { getItem, setItem } from 'localforage';
+import localforage from 'localforage';
 import isEqual from 'lodash.isequal';
 import cloneDeep from 'lodash.clonedeep';
 
@@ -11,37 +11,33 @@ interface Checksum {
     [table: string]: string | null
 }
 
+export type SYNC_STATE = 'behind' | 'head' | 'unknown';
+
 interface FeldbuchState {
     dirty: boolean,
-    synced: boolean,
+    synced: SYNC_STATE,
     plots: Plot[],
     datasets: any[],
-    checkSyncState: () => void,
+    checkSyncState: () => Promise<boolean>,
     sync?: () => void,
     addDataset?: (data: Dataset) => void
 }
 
 const initialState: FeldbuchState = {
     dirty: true,
-    synced: false,
+    synced: 'unknown',
     plots: [],
     datasets: [],
-    checkSyncState: () => console.log('FeldbuchProvider not initialized!')
+    checkSyncState: () => Promise.reject('FeldbuchProvider not initialized!')
 }
 
 // create the context
 const FeldbuchContext = createContext(initialState);
 
-Remote checksum weg machen und durch funktion ersetzen (global) die, die checksums lädt. Dann im kontext mit den local vergleichen 
-und entsprechend den synced state setzen
-
-
 export const FeldbuchProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
     // create the internal state
     const [dirty, setDirty] = useState<boolean>(false);
-    const [synced, setSynced] = useState<boolean>(false);
-    const [remoteChecksums, setRemoteChecksums] = useState<Checksum>({});
-    const [localChecksums, setLocalChecksums] = useState<Checksum>({feldbuch: '424242'});
+    const [synced, setSynced] = useState<SYNC_STATE>('unknown');
     const [plots, setPlots] = useState<Plot[]>([]);
     const [datasets, setDatasets] = useState<Dataset[]>([]);
     const [dataUpdates, setDataUpdates] = useState<Dataset[]>([]);
@@ -49,15 +45,6 @@ export const FeldbuchProvider: React.FC<React.PropsWithChildren> = ({ children }
 
     // monitor the login state
     const { user } = useAuth();
-
-    // check if we are synced
-    useEffect(() => {
-        if (isEqual(remoteChecksums, localChecksums)) {
-            setSynced(true);
-        } else {
-            setSynced(false);
-        }
-    }, [remoteChecksums, localChecksums]);
 
     // check if we are dirty
     useEffect(() => {
@@ -67,107 +54,54 @@ export const FeldbuchProvider: React.FC<React.PropsWithChildren> = ({ children }
     // first off load the localChecksum
     useEffect(() => {
         if (syncStore) {
-            // store checksums
-            getItem('checksum', (err, value: Checksum | null) => {
-                if (!err && value) setLocalChecksums(value)
-            });
-
             // get plot data
-            getItem('plots', (err, value: Plot[] | null) => {
+            localforage.getItem('plots', (err, value: Plot[] | null) => {
                 if (!err && value) setPlots(value)
             });
 
             // get Datasets
-            getItem('datasets', (err, value: Dataset[] | null) => {
+            localforage.getItem('datasets', (err, value: Dataset[] | null) => {
                 if (!err && value) setDatasets(value)
             })
 
             // get stored Updates
-            getItem('updates', (err, value: Dataset[] | null) => {
+            localforage.getItem('updates', (err, value: Dataset[] | null) => {
                 if (!err && value) setDataUpdates(value)
             })
             setSyncStore(false)
         }
     }, [syncStore])
 
-    // load remote checksums if possible
-    useEffect(() => {
-        // if logged in, load the checksums
-        if (user) {
-            supabase.from('checksums').select().then(({ error, data }) => {
-                if (!error && data) {
-                    // build the checksum object
-                    const ch: {[key: string]: string | null} = {}
-                    data.forEach(row => {
-                        if (row.table && row.checksum) {
-                            ch[row.table] = row.checksum
-                        }
-                    });
-                    // store to context
-                    setRemoteChecksums(ch);
-                }
-            })
-        } else {
-            // set empty to get out of sync
-            setRemoteChecksums({});
-        }
-    }, [user]);
 
     // create context functions
 
-    const checkSyncState = (): boolean => {
 
-    }
 
-    const sync = () => {
-        // create a sync planner
-        const toSync = {
-            feldbuch: localChecksums['feldbuch'] !== remoteChecksums['feldbuch'],
-            g1: localChecksums['g1'] !== remoteChecksums['g1'],
-            g2: localChecksums['g2'] !== remoteChecksums['g2'],
-            g3: localChecksums['g3'] !== remoteChecksums['g3'],
-            g4: localChecksums['g4'] !== remoteChecksums['g4'],
-        }
-
-        // go for each
-        Object.entries(toSync).forEach(([key, doSync]) => {
-            if (doSync) {
-                supabase.from(key).select().then(({error, data}) => {
-                    if (!error && data) {
-                        if (key === 'feldbuch') {
-                            setItem('plots', data)
-                        } else {
-                            // filter the existing datasets 
-                            const filtData = [...datasets.map(d => d.type !== key), ...data]
-                            setItem('datasets', filtData)
+    // check sync state
+    const checkSyncState = (): Promise<boolean> => {
+        return new Promise((resolve, reject) => {
+            // try to reach supabase
+            supabase.from('checksum').select('checksum').limit(1).then(({ error, data }) => {
+                // reject the promise if there was a connection problem with supabase
+                if (error) {
+                    setSynced('unknown');
+                    reject(error.message);
+                } else {
+                    // get the local stuff
+                    localforage.getItem('checksum', (err, value: string | null) => {
+                        if (err) {
+                            setSynced('unknown')
+                            reject(err)
                         }
-                    }
-                }); 
-            }
-        });
-
-        // check if something was refreshed
-        if (Object.values(toSync).some(b => b)) {
-            // update the checksums into store
-            supabase.from('checksums').select().then(({error, data}) => {
-                if (!error && data) {
-                    const checks: Checksum = {}
-                    data.forEach(([key, val]) => {
-                        checks[key] = val
-                    })
-                    setItem('checksum', checks, (err) => {
-                        if (!err) {
-                            setSyncStore(false)
-                        }
-                    })
+                        const isSynced = value === data[0]
+                        // compare the checksums
+                        setSynced(isSynced ? 'head' : 'behind');
+                        resolve(isSynced);
+                        
+                    });
                 }
-            });
-        }
-
-        // TODO: upload the dataUpdates
-        if (dataUpdates.length > 0) {
-            
-        }
+            })
+        });
     }
 
     const addDataset = (data: Dataset) => {
@@ -189,7 +123,7 @@ export const FeldbuchProvider: React.FC<React.PropsWithChildren> = ({ children }
         plots: plots,
         datasets: datasets,
         checkSyncState: checkSyncState,
-        sync: sync,
+        sync: () => {},
         addDataset: addDataset
     }
 
