@@ -18,7 +18,7 @@ interface FeldbuchState {
     plots: Plot[],
     datasets: any[],
     checkSyncState: () => Promise<boolean>,
-    sync?: () => void,
+    sync?: () => Promise<boolean>,
     upload?: (data: Dataset[]) => void,
     addDataset?: (data: Dataset) => void
 }
@@ -76,7 +76,49 @@ export const FeldbuchProvider: React.FC<React.PropsWithChildren> = ({ children }
     // create context functions
 
     // sync
-    const sync = () => console.log('Synchronizing...')
+    const sync = (): Promise<boolean> => {
+        return new Promise((resolve, reject) => {
+            const plotQuery = supabase.from('feldbuch').select().then(({error, data}) => {
+                if (error) reject(error)
+
+                // got feldbuch data
+                return localforage.setItem('feldbuch', data)
+            })
+
+            // wait for the plotQuery, then load the data
+            const dataQueries: PromiseLike<Dataset[]>[] = [];
+            ['g1', 'g2', 'g3', 'g4'].forEach(name => {
+                dataQueries.push(supabase.from('g1').select().then(({error, data}) => {
+                    if (error) reject(error)
+                    if (data) {
+                        return data as Dataset[]
+                    } else {
+                        return []
+                    }
+                }))
+            })
+            
+            // data saver query
+            const dataSave = Promise.all([plotQuery]).then(() => {
+                Promise.all(dataQueries).then((datasets) => {
+                    return localforage.setItem('datasets', datasets.flat())
+                })
+            })
+
+            // do the checksum
+            return Promise.all([dataSave]).then(() => {
+                supabase.from('checksum').select('checksum').limit(1).then(({error, data}) => {
+                    if (error) reject('Checksum error')
+                    if (data) {
+                        localforage.setItem('checksum', data[0].checksum).then(() => {
+                            setSyncStore(true)
+                            checkSyncState().then(isSynced => resolve(isSynced))
+                        })
+                    }
+                });
+            })
+        });
+    }
 
     const upload = () => console.log('Uploading...')
 
@@ -96,7 +138,7 @@ export const FeldbuchProvider: React.FC<React.PropsWithChildren> = ({ children }
                             setSynced('unknown')
                             reject(err)
                         }
-                        const isSynced = value === data[0]
+                        const isSynced = value === data[0].checksum
                         // compare the checksums
                         setSynced(isSynced ? 'head' : 'behind');
                         resolve(isSynced);
