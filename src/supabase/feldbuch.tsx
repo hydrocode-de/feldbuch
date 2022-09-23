@@ -1,6 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from "react"
 import localforage from 'localforage';
-import isEqual from 'lodash.isequal';
 import cloneDeep from 'lodash.clonedeep';
 
 import { Plot, Dataset } from "./feldbuch.model";
@@ -20,6 +19,7 @@ interface FeldbuchState {
     datasets: any[],
     checkSyncState: () => Promise<boolean>,
     sync?: () => void,
+    upload?: (data: Dataset[]) => void,
     addDataset?: (data: Dataset) => void
 }
 
@@ -75,7 +75,10 @@ export const FeldbuchProvider: React.FC<React.PropsWithChildren> = ({ children }
 
     // create context functions
 
+    // sync
+    const sync = () => console.log('Synchronizing...')
 
+    const upload = () => console.log('Uploading...')
 
     // check sync state
     const checkSyncState = (): Promise<boolean> => {
@@ -123,7 +126,8 @@ export const FeldbuchProvider: React.FC<React.PropsWithChildren> = ({ children }
         plots: plots,
         datasets: datasets,
         checkSyncState: checkSyncState,
-        sync: () => {},
+        sync: sync,
+        upload: upload,
         addDataset: addDataset
     }
 

@@ -4,6 +4,7 @@ import { logInOutline, logOutOutline } from 'ionicons/icons';
 
 import { useHistory } from "react-router";
 import { useAuth } from "../supabase/auth"
+import SyncButton from "./SyncButton";
 
 // get the IonButton props without the onClick handler
 type IonButtonProps = Exclude<React.ComponentProps<typeof IonButton>, 'onClick'>
@@ -27,9 +28,12 @@ const LoginButton: React.FC<IonButtonProps> = props => {
 
     return <>
         { isLoggedIn ? ( 
-            <IonButton onClick={() => logout!().then(v => console.log(v))} {...props} >
-                <IonIcon slot="icon-only" icon={logOutOutline} />
-            </IonButton>
+            <>
+                <SyncButton {...props} />
+                <IonButton onClick={() => logout!().then(v => console.log(v))} {...props} >
+                    <IonIcon slot="icon-only" icon={logOutOutline} />
+                </IonButton>
+            </>
         ) : (
             <IonButton onClick={() => {history.push('/login')}} {...props} >
                 <IonIcon slot="icon-only" icon={logInOutline} />
