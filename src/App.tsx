@@ -19,19 +19,14 @@ import '@ionic/react/css/display.css';
 /* Theme variables */
 import './theme/variables.css';
 
-import { useAuth } from './supabase/auth';
-
-import Authenticated from './Authenticated';
-import Login from './pages/Login';
+import Navigation from './Navigation';
 
 setupIonicReact();
 
 const App: React.FC = () => {
-  const { user } = useAuth()
-  console.log(user)
   return (
     <IonApp>
-      { user ? <Authenticated /> : <Login />}
+      <Navigation />
     </IonApp>
 )};
 

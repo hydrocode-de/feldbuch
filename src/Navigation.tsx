@@ -4,8 +4,9 @@ import { IonReactRouter } from '@ionic/react-router';
 
 import Home from './pages/Home';
 import ViewMessage from './pages/ViewMessage';
+import Login from './pages/Login';
 
-const Authenticated: React.FC = () => {
+const Navigation: React.FC = () => {
     return (
         <IonReactRouter>
           <IonRouterOutlet>
@@ -15,6 +16,9 @@ const Authenticated: React.FC = () => {
             <Route path="/home" exact={true}>
               <Home />
             </Route>
+            <Route path="/login" exact>
+              <Login />
+            </Route>
             <Route path="/message/:id">
                <ViewMessage />
             </Route>
@@ -23,4 +27,4 @@ const Authenticated: React.FC = () => {
     );
 }
 
-export default Authenticated;
+export default Navigation;

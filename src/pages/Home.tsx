@@ -16,6 +16,7 @@ import {
 import './Home.css';
 
 import { useFeldbuch } from '../supabase/feldbuch';
+import LoginButton from '../components/LoginButton';
 
 const Home: React.FC = () => {
 
@@ -39,9 +40,10 @@ const Home: React.FC = () => {
       <IonHeader>
         <IonToolbar>
           <IonTitle>Inbox</IonTitle>
-          <IonButton slot="end" onClick={() => checkSyncState().then(v => console.log(v)).catch(e => console.log(e))}>
+          {/* <IonButton slot="end" onClick={() => checkSyncState().then(v => console.log(v)).catch(e => console.log(e))}>
             { synced }
-          </IonButton>
+          </IonButton> */}
+          <LoginButton slot="end" fill="clear" />
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
