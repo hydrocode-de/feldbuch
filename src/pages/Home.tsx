@@ -40,9 +40,6 @@ const Home: React.FC = () => {
       <IonHeader>
         <IonToolbar>
           <IonTitle>Inbox</IonTitle>
-          {/* <IonButton slot="end" onClick={() => checkSyncState().then(v => console.log(v)).catch(e => console.log(e))}>
-            { synced }
-          </IonButton> */}
           <LoginButton slot="end" fill="clear" />
         </IonToolbar>
       </IonHeader>

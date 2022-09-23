@@ -16,7 +16,7 @@ interface FeldbuchState {
     dirty: boolean,
     synced: SYNC_STATE,
     plots: Plot[],
-    datasets: any[],
+    datasets: Dataset[],
     checkSyncState: () => Promise<boolean>,
     sync?: () => Promise<boolean>,
     upload?: (data: Dataset[]) => void,
@@ -82,16 +82,19 @@ export const FeldbuchProvider: React.FC<React.PropsWithChildren> = ({ children }
                 if (error) reject(error)
 
                 // got feldbuch data
-                return localforage.setItem('feldbuch', data)
+                return localforage.setItem('plots', data)
             })
 
             // wait for the plotQuery, then load the data
             const dataQueries: PromiseLike<Dataset[]>[] = [];
             ['g1', 'g2', 'g3', 'g4'].forEach(name => {
-                dataQueries.push(supabase.from('g1').select().then(({error, data}) => {
+                dataQueries.push(supabase.from(name).select().then(({error, data}) => {
                     if (error) reject(error)
                     if (data) {
-                        return data as Dataset[]
+                        const dataList: Dataset[] = data.map(d => {
+                            return {type: name, ...d}
+                        })
+                        return dataList
                     } else {
                         return []
                     }
@@ -157,7 +160,7 @@ export const FeldbuchProvider: React.FC<React.PropsWithChildren> = ({ children }
             newDatasets.push(data)
 
             // set the data
-            setDataUpdates(newDatasets)
+            localforage.setItem('updates', newDatasets).then(() => setDataUpdates(newDatasets))
         }
     }
 
