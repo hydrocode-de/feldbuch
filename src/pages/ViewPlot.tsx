@@ -1,7 +1,10 @@
-import { IonBackButton, IonButtons, IonContent, IonHeader, IonItem, IonLabel, IonList, IonListHeader, IonPage, IonTitle, IonToolbar } from "@ionic/react";
+import { IonBackButton, IonButtons, IonContent, IonFab, IonFabButton, IonHeader, IonIcon, IonItem, IonLabel, IonList, IonListHeader, IonPage, IonTitle, IonToolbar } from "@ionic/react";
+import { add } from 'ionicons/icons'
 import { useEffect, useState } from "react";
 import { useParams } from "react-router"
-import cloneDeep from "lodash.clonedeep";
+import LoginButton from "../components/LoginButton";
+import { useAuth } from "../supabase/auth";
+
 
 import { useFeldbuch } from "../supabase/feldbuch";
 import { Dataset, Plot } from "../supabase/feldbuch.model";
@@ -17,6 +20,9 @@ const ViewPlot: React.FC = () => {
 
     // use Feldbuch context
     const { plots, datasets } = useFeldbuch();
+
+    // check if the user is logged in
+    const { user } = useAuth();
 
     // load the correct plot and its data
     useEffect(() => {
@@ -37,6 +43,9 @@ const ViewPlot: React.FC = () => {
                         <IonBackButton defaultHref="/list" />
                     </IonButtons>
                     <IonTitle>{ plot?.species } individual {plot?.individual }</IonTitle>
+                    <IonButtons slot="end">
+                        <LoginButton fill="clear" />
+                    </IonButtons>
                 </IonToolbar>
             </IonHeader>
 
@@ -56,6 +65,13 @@ const ViewPlot: React.FC = () => {
                     </IonListHeader>
                     {dataUpdateList.map((data, idx) => <IonItem key={idx}><IonLabel>{ data.plot_id  }</IonLabel></IonItem>)}
                 </IonList>
+
+                <IonFab vertical="bottom" horizontal="end" slot="fixed">
+                    <IonFabButton color="success" disabled={!user}>
+                        <IonIcon icon={add} />
+                    </IonFabButton>
+                </IonFab>
+
             </IonContent>
         </IonPage>
     )

@@ -1,4 +1,4 @@
-import { IonBackButton, IonButton, IonButtons, IonContent, IonHeader, IonIcon, IonInput, IonItem, IonLabel, IonPage, IonSpinner, IonToolbar } from "@ionic/react";
+import { IonBackButton, IonButton, IonButtons, IonContent, IonHeader, IonIcon, IonInput, IonItem, IonLabel, IonPage, IonSpinner, IonTitle, IonToolbar } from "@ionic/react";
 import { useState } from "react";
 import { useAuth } from "../supabase/auth";
 
@@ -28,6 +28,7 @@ const Login: React.FC = () => {
                     <IonButtons slot="start">
                         <IonBackButton />
                     </IonButtons>
+                    <IonTitle>Bitte autentifizieren sie sich</IonTitle>
                 </IonToolbar>
             </IonHeader>
             <IonContent>
@@ -37,13 +38,12 @@ const Login: React.FC = () => {
                     </IonItem>
                 ) : null }
                 <IonItem>
-                    <IonLabel>e-mail</IonLabel>
+                    <IonLabel>E Mail Adresse</IonLabel>
                     <IonInput type="text" value={email} onIonChange={e => setEmail(e.target.value as string?? '')}/>
                 </IonItem>
                 <IonButton disabled={email === '' || !login || pending} expand="full" onClick={onLogin}>
                     { pending ? <IonSpinner name="dots" /> : 'Request Link'}
                 </IonButton>
-                {/* <IonButton disabled onClick={() => login!({provider: 'github'}).then(v => console.log(v)).catch(e => console.log(e))}>Login with Github</IonButton> */}
             </IonContent>
         </IonPage>
     )

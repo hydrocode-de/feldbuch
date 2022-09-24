@@ -2,8 +2,6 @@ import { Redirect, Route } from 'react-router-dom';
 import { IonRouterOutlet } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
 
-import Home from './pages/Home';
-import ViewMessage from './pages/ViewMessage';
 import Login from './pages/Login';
 import PlotList from './pages/PlotList';
 import ViewPlot from './pages/ViewPlot';
@@ -18,17 +16,11 @@ const Navigation: React.FC = () => {
             <Route path="/list" exact>
               <PlotList />
             </Route>
-            <Route path="/home" exact={true}>
-              <Home />
-            </Route>
             <Route path="/login" exact>
               <Login />
             </Route>
             <Route path="/list/:id">
               <ViewPlot />
-            </Route>
-            <Route path="/message/:id">
-               <ViewMessage />
             </Route>
           </IonRouterOutlet>
         </IonReactRouter>
