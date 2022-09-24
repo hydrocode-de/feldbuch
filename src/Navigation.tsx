@@ -5,6 +5,7 @@ import { IonReactRouter } from '@ionic/react-router';
 import Login from './pages/Login';
 import PlotList from './pages/PlotList';
 import ViewPlot from './pages/ViewPlot';
+import AddUpdates from './pages/AddUpdates';
 
 const Navigation: React.FC = () => {
     return (
@@ -19,8 +20,11 @@ const Navigation: React.FC = () => {
             <Route path="/login" exact>
               <Login />
             </Route>
-            <Route path="/list/:id">
+            <Route path="/list/:id" exact>
               <ViewPlot />
+            </Route>
+            <Route path="/list/:id/add" exact>
+              <AddUpdates />
             </Route>
           </IonRouterOutlet>
         </IonReactRouter>

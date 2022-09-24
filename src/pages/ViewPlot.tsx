@@ -67,7 +67,7 @@ const ViewPlot: React.FC = () => {
                 </IonList>
 
                 <IonFab vertical="bottom" horizontal="end" slot="fixed">
-                    <IonFabButton color="success" disabled={!user}>
+                    <IonFabButton color="success" disabled={!user} routerLink={`/list/${plot?.id}/add`} routerDirection="forward">
                         <IonIcon icon={add} />
                     </IonFabButton>
                 </IonFab>

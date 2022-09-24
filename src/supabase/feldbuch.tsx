@@ -14,6 +14,7 @@ interface FeldbuchState {
     synced: SYNC_STATE,
     plots: Plot[],
     datasets: Dataset[],
+    updates: Dataset[],
     checkSyncState: () => Promise<boolean>,
     sync?: () => Promise<boolean>,
     upload?: (data: Dataset[]) => Promise<void>,
@@ -25,6 +26,7 @@ const initialState: FeldbuchState = {
     synced: 'unknown',
     plots: [],
     datasets: [],
+    updates: [],
     checkSyncState: () => Promise.reject('FeldbuchProvider not initialized!')
 }
 
@@ -209,6 +211,7 @@ export const FeldbuchProvider: React.FC<React.PropsWithChildren> = ({ children }
         synced: synced,
         plots: plots,
         datasets: datasets,
+        updates: dataUpdates,
         checkSyncState: checkSyncState,
         sync: sync,
         upload: upload,
