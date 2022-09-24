@@ -6,9 +6,6 @@ import { Plot, Dataset } from "./feldbuch.model";
 import { supabase } from './supabase';
 import { useAuth } from "./auth";
 
-interface Checksum {
-    [table: string]: string | null
-}
 
 export type SYNC_STATE = 'behind' | 'head' | 'unknown';
 
@@ -50,7 +47,7 @@ export const FeldbuchProvider: React.FC<React.PropsWithChildren> = ({ children }
     useEffect(() => {
         if (dataUpdates.length > 0 && !dirty) setDirty(true)
         if (dataUpdates.length === 0 && dirty) setDirty(false)
-    }, [dataUpdates])
+    }, [dataUpdates, dirty])
 
     // first off load the local data
     useEffect(() => {
@@ -86,7 +83,7 @@ export const FeldbuchProvider: React.FC<React.PropsWithChildren> = ({ children }
                 return localforage.setItem('plots', data)
             })
 
-            // wait for the plotQuery, then load the data
+            /* // wait for the plotQuery, then load the data
             const dataQueries: PromiseLike<Dataset[]>[] = [];
             ['g1', 'g2', 'g3', 'g4'].forEach(name => {
                 dataQueries.push(supabase.from(name).select().then(({error, data}) => {
@@ -100,26 +97,41 @@ export const FeldbuchProvider: React.FC<React.PropsWithChildren> = ({ children }
                         return []
                     }
                 }))
-            })
-            
-            // data saver query
-            const dataSave = Promise.all([plotQuery]).then(() => {
-                Promise.all(dataQueries).then((datasets) => {
-                    return localforage.setItem('datasets', datasets.flat())
-                })
-            })
+            }) */
 
-            // do the checksum
-            return Promise.all([dataSave]).then(() => {
-                supabase.from('checksum').select('checksum').limit(1).then(({error, data}) => {
-                    if (error) reject('Checksum error')
-                    if (data) {
-                        localforage.setItem('checksum', data[0].checksum).then(() => {
-                            setSyncStore(true)
-                            checkSyncState().then(isSynced => resolve(isSynced))
-                        })
-                    }
-                });
+            // get the accepted data
+            const dataQuery = supabase.from('datasets').select().then(({error, data}) => {
+                if (error) reject(error.message)
+                if (data) {
+                    return data as Dataset[]
+                } else {
+                    return []
+                }
+            }).then(datasets => localforage.setItem('datasets', datasets))
+            
+            // get the updates candidates
+            const updatesQuery = supabase.from('updates').select().then(({error, data}) => {
+                if (error) reject(error.message)
+                if (data) {
+                    return data as Dataset[]
+                } else {
+                    return []
+                }
+            }).then(updates => localforage.setItem('updates', updates))
+
+            // update the checksums after all other are finished
+            return Promise.all([plotQuery]).then(() => {
+                Promise.all([dataQuery, updatesQuery]).then(() => {
+                    supabase.from('checksum').select('checksum').limit(1).then(({error, data}) => {
+                        if (error) reject('Checksum error')
+                        if (data) {
+                            localforage.setItem('checksum', data[0].checksum).then(() => {
+                                setSyncStore(true)
+                                checkSyncState().then(isSynced => resolve(isSynced))
+                            })
+                        }
+                    });
+                })
             })
         });
     }
