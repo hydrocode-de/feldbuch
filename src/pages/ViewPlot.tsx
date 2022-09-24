@@ -10,6 +10,7 @@ const ViewPlot: React.FC = () => {
     // define the component state
     const [plot, setPlot] = useState<Plot>();
     const [datasetList, setDatasetList] = useState<Dataset[]>([]);
+    const [dataUpdateList, setDataUpdateList] = useState<Dataset[]>([]);
 
     // get url query params
     const params = useParams<{id: string}>();
@@ -46,9 +47,14 @@ const ViewPlot: React.FC = () => {
                     <IonListHeader>
                         <IonTitle>Existierende Daten</IonTitle>
                     </IonListHeader>
-                    
-                    {datasetList.map((data, idx) => <IonItem key={idx}><IonLabel>DATASET TYPE: { data.type }</IonLabel></IonItem>)}
+                    {datasetList.map((data, idx) => <IonItem key={idx}><IonLabel>DATASET TYPE: { data.group }</IonLabel></IonItem>)}
+                </IonList>
 
+                <IonList>
+                    <IonListHeader>
+                        <IonTitle>Updates</IonTitle>
+                    </IonListHeader>
+                    {dataUpdateList.map((data, idx) => <IonItem key={idx}><IonLabel>{ data.plot_id  }</IonLabel></IonItem>)}
                 </IonList>
             </IonContent>
         </IonPage>

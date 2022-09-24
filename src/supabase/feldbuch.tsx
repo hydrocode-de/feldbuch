@@ -19,7 +19,7 @@ interface FeldbuchState {
     datasets: Dataset[],
     checkSyncState: () => Promise<boolean>,
     sync?: () => Promise<boolean>,
-    upload?: (data: Dataset[]) => void,
+    upload?: (data: Dataset[]) => Promise<void>,
     addDataset?: (data: Dataset) => void
 }
 
@@ -43,15 +43,16 @@ export const FeldbuchProvider: React.FC<React.PropsWithChildren> = ({ children }
     const [dataUpdates, setDataUpdates] = useState<Dataset[]>([]);
     const [syncStore, setSyncStore] = useState<boolean>(true);
 
-    // monitor the login state
+    // get the current user
     const { user } = useAuth();
 
     // check if we are dirty
     useEffect(() => {
-        if (dataUpdates.length > 0) setDirty(true)
+        if (dataUpdates.length > 0 && !dirty) setDirty(true)
+        if (dataUpdates.length === 0 && dirty) setDirty(false)
     }, [dataUpdates])
 
-    // first off load the localChecksum
+    // first off load the local data
     useEffect(() => {
         if (syncStore) {
             // get plot data
@@ -92,7 +93,7 @@ export const FeldbuchProvider: React.FC<React.PropsWithChildren> = ({ children }
                     if (error) reject(error)
                     if (data) {
                         const dataList: Dataset[] = data.map(d => {
-                            return {type: name, ...d}
+                            return {group: name, ...d}
                         })
                         return dataList
                     } else {
@@ -123,7 +124,33 @@ export const FeldbuchProvider: React.FC<React.PropsWithChildren> = ({ children }
         });
     }
 
-    const upload = () => console.log('Uploading...')
+    // upload updates to the database
+    const upload = (): Promise<void> => {
+        return new Promise((resolve, reject) => {
+            if (!user) reject('No user logged in.')
+
+            // convert the data - add user id
+            const updates = dataUpdates.map(d => {
+                const {group, plot_id, ...data} = d
+                return {user_id: user?.id, group: group, plot_id: plot_id, updates: data}
+            })
+
+            // send to supabase
+            supabase.from('updates').insert(updates).then(({ error }) => {
+                // if there was an error, reject the promise
+                if (error) {
+                    reject(error.message)
+                } else {
+                    // empty the cache
+                    setDataUpdates([])
+                    
+                    // resolve void
+                    resolve()
+                }
+            })
+
+        })
+    }
 
     // check sync state
     const checkSyncState = (): Promise<boolean> => {
