@@ -14,11 +14,13 @@ export interface Plot {
 }
 
 export interface Dataset {
-    id: number,
+    id?: number,
     plot_id: number,
-    group: 'g1' | 'g2' | 'g3' | 'g4',
+    group_id: number,
     user_id?: string,
-    data: {[key: string]: Date | number | string};
+    data: {[key: string]: Date | number | string},
+    measurement_time?: Date,
+    created_at?: Date
 }
 
 export interface DataGroup {

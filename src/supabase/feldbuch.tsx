@@ -5,6 +5,7 @@ import cloneDeep from 'lodash.clonedeep';
 import { Plot, Dataset, DataGroup } from "./feldbuch.model";
 import { supabase } from './supabase';
 import { useAuth } from "./auth";
+import { useIonToast } from "@ionic/react";
 
 
 export type SYNC_STATE = 'behind' | 'head' | 'unknown';
@@ -18,8 +19,8 @@ interface FeldbuchState {
     dataGroups: DataGroup[],
     checkSyncState: () => Promise<boolean>,
     sync?: () => Promise<boolean>,
-    upload?: (data: Dataset[]) => Promise<void>,
-    addDataset?: (data: Dataset) => void
+    upload?: () => Promise<void>,
+    addDataset?: (data: Dataset) => Promise<void>
 }
 
 const initialState: FeldbuchState = {
@@ -158,14 +159,8 @@ export const FeldbuchProvider: React.FC<React.PropsWithChildren> = ({ children }
         return new Promise((resolve, reject) => {
             if (!user) reject('No user logged in.')
 
-            // convert the data - add user id
-            const updates = dataUpdates.map(d => {
-                const {group, plot_id, ...data} = d
-                return {user_id: user?.id, group: group, plot_id: plot_id, updates: data}
-            })
-
             // send to supabase
-            supabase.from('updates').insert(updates).then(({ error }) => {
+            supabase.from('updates').insert(dataUpdates).then(({ error }) => {
                 // if there was an error, reject the promise
                 if (error) {
                     reject(error.message)
@@ -208,16 +203,31 @@ export const FeldbuchProvider: React.FC<React.PropsWithChildren> = ({ children }
         });
     }
 
-    const addDataset = (data: Dataset) => {
-        // check if the plot exists
-        if (plots.map(p => p.id).includes(data.plot_id)) {
-            // add this dataset to the stack
-            const newDatasets = cloneDeep(dataUpdates)
-            newDatasets.push(data)
+    const addDataset = (data: Dataset): Promise<void> => {
+        return new Promise((resolve, reject) => {
+            if (user) {
+                // check if the plot exists
+                if (plots.map(p => p.id).includes(data.plot_id)) {
+                    // add this dataset to the stack
+                    const newDatasets = cloneDeep(dataUpdates)
+                    newDatasets.push({
+                        ...data,
+                        user_id: user.id,
+                        measurement_time: new Date()
+                    })
 
-            // set the data
-            localforage.setItem('updates', newDatasets).then(() => setDataUpdates(newDatasets))
-        }
+                    // set the data
+                    localforage.setItem('updates', newDatasets).then(() => {
+                        setDataUpdates(newDatasets)
+                        resolve()
+                    })
+                } else {
+                    reject(`The bse plot dataset of ID ${data.plot_id} is not in local cache.`)
+                }
+            } else {
+                reject('User not logged in!')
+            }
+        })
     }
 
     // create the context function

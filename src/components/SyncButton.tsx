@@ -1,4 +1,4 @@
-import { IonButton, IonIcon, IonSpinner } from "@ionic/react";
+import { IonButton, IonIcon, IonSpinner, useIonToast } from "@ionic/react";
 import { useEffect, useState } from "react";
 import { cloudDownloadOutline, cloudUploadOutline, refreshOutline, alertOutline } from 'ionicons/icons';
 
@@ -13,6 +13,9 @@ const SyncButton: React.FC<IonButtonProps> = props => {
     
     // some component state
     const [busy, setBusy] = useState<boolean>(false);
+
+    // get a toast provider
+    const [ present ] = useIonToast()
     
     // on component mount, check the sync state
     useEffect(() => {
@@ -24,11 +27,40 @@ const SyncButton: React.FC<IonButtonProps> = props => {
     // data handler
     const onUpload = () => {
         // setBusy(true)
-        upload!([])
+        upload!().then(() => {
+            // send a message
+            present({
+                message: 'Deine Änderungen wurden an die Datenbank geschickt. Vielen Dank!',
+                duration: 1500,
+                position: 'top',
+                color: 'success'
+            })
+        }).catch(error => {
+            present({
+                message: error,
+                duration: 2000,
+                position: 'top',
+                color: 'danger'
+            })
+        })
     }
 
     const onSync = () => {
-        sync!()
+        sync!().then(() => {
+            present({
+                message: 'Du bist auf dem neusten Stand',
+                duration: 1000,
+                position: 'top',
+                color: 'success'
+            })
+        }).catch(error => {
+            present({
+                message: error,
+                duration: 1500,
+                position: 'top',
+                color: 'danger'
+            })
+        })
     }
 
     const onRefresh = () => {

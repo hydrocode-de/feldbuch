@@ -19,7 +19,7 @@ const ViewPlot: React.FC = () => {
     const params = useParams<{id: string}>();
 
     // use Feldbuch context
-    const { plots, datasets } = useFeldbuch();
+    const { plots, datasets, updates } = useFeldbuch();
 
     // check if the user is logged in
     const { user } = useAuth();
@@ -29,10 +29,12 @@ const ViewPlot: React.FC = () => {
         // find the relevant data
         const plot = plots.find(p => p.id == Number(params.id))
         const datasetList = datasets.filter(d => d.plot_id === plot!.id)
-        
+        const updatesList = updates.filter(d => d.plot_id === plot!.id)
+
         // update the component state
         setPlot(plot)
         setDatasetList(datasetList)
+        setDataUpdateList(updatesList)
     }, [plots])
 
     return (
@@ -56,7 +58,7 @@ const ViewPlot: React.FC = () => {
                     <IonListHeader>
                         <IonTitle>Existierende Daten</IonTitle>
                     </IonListHeader>
-                    {datasetList.map((data, idx) => <IonItem key={idx}><IonLabel>DATASET TYPE: { data.group }</IonLabel></IonItem>)}
+                    {datasetList.map((data, idx) => <IonItem key={idx}><IonLabel>DATASET TYPE: { data.group_id }</IonLabel></IonItem>)}
                 </IonList>
 
                 <IonList>
