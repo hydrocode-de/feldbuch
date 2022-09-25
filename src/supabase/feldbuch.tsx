@@ -2,7 +2,7 @@ import React, { createContext, useContext, useEffect, useState } from "react"
 import localforage from 'localforage';
 import cloneDeep from 'lodash.clonedeep';
 
-import { Plot, Dataset } from "./feldbuch.model";
+import { Plot, Dataset, DataGroup } from "./feldbuch.model";
 import { supabase } from './supabase';
 import { useAuth } from "./auth";
 
@@ -15,6 +15,7 @@ interface FeldbuchState {
     plots: Plot[],
     datasets: Dataset[],
     updates: Dataset[],
+    dataGroups: DataGroup[],
     checkSyncState: () => Promise<boolean>,
     sync?: () => Promise<boolean>,
     upload?: (data: Dataset[]) => Promise<void>,
@@ -27,6 +28,7 @@ const initialState: FeldbuchState = {
     plots: [],
     datasets: [],
     updates: [],
+    dataGroups: [],
     checkSyncState: () => Promise.reject('FeldbuchProvider not initialized!')
 }
 
@@ -40,6 +42,7 @@ export const FeldbuchProvider: React.FC<React.PropsWithChildren> = ({ children }
     const [plots, setPlots] = useState<Plot[]>([]);
     const [datasets, setDatasets] = useState<Dataset[]>([]);
     const [dataUpdates, setDataUpdates] = useState<Dataset[]>([]);
+    const [dataGroups, setDataGroups] = useState<DataGroup[]>([]);
     const [syncStore, setSyncStore] = useState<boolean>(true);
 
     // get the current user
@@ -58,6 +61,11 @@ export const FeldbuchProvider: React.FC<React.PropsWithChildren> = ({ children }
             localforage.getItem('plots', (err, value: Plot[] | null) => {
                 if (!err && value) setPlots(value)
             });
+
+            // get groups lookup
+            localforage.getItem('groups', (err, value: DataGroup[] | null) => {
+                if (!err && value) setDataGroups(value)
+            })
 
             // get Datasets
             localforage.getItem('datasets', (err, value: Dataset[] | null) => {
@@ -83,6 +91,13 @@ export const FeldbuchProvider: React.FC<React.PropsWithChildren> = ({ children }
 
                 // got feldbuch data
                 return localforage.setItem('plots', data)
+            })
+
+            const groupsQuery = supabase.from('groups').select().then(({error, data}) => {
+                if (error) reject(error)
+
+                // got groups lookup data
+                return localforage.setItem('groups', data)
             })
 
             /* // wait for the plotQuery, then load the data
@@ -122,7 +137,7 @@ export const FeldbuchProvider: React.FC<React.PropsWithChildren> = ({ children }
             }).then(updates => localforage.setItem('updates', updates))
 
             // update the checksums after all other are finished
-            return Promise.all([plotQuery]).then(() => {
+            return Promise.all([plotQuery, groupsQuery]).then(() => {
                 Promise.all([dataQuery, updatesQuery]).then(() => {
                     supabase.from('checksum').select('checksum').limit(1).then(({error, data}) => {
                         if (error) reject('Checksum error')
@@ -212,6 +227,7 @@ export const FeldbuchProvider: React.FC<React.PropsWithChildren> = ({ children }
         plots: plots,
         datasets: datasets,
         updates: dataUpdates,
+        dataGroups: dataGroups,
         checkSyncState: checkSyncState,
         sync: sync,
         upload: upload,

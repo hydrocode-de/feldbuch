@@ -14,9 +14,16 @@ export interface Plot {
 }
 
 export interface Dataset {
-    id: string,
+    id: number,
     plot_id: number,
     group: 'g1' | 'g2' | 'g3' | 'g4',
     user_id?: string,
     data: {[key: string]: Date | number | string};
+}
+
+export interface DataGroup {
+    id: number;
+    short_name: string;
+    long_name: string;
+    created_at: Date;
 }
