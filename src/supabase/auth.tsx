@@ -2,20 +2,26 @@ import { User, UserCredentials } from '@supabase/supabase-js';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { supabase } from './supabase';
 
+const ADMIN_EMAILS = ['mareike.mohr@waldbau.uni-freiburg.de', 'mirko@hydrocode.de']
 
 interface AuthState {
     user: User | null,
+    isAdmin: boolean,
     login?: (data: UserCredentials) => Promise<any>,
     logout?: () => Promise<any>
 }
 
 // create a context
-const AuthContext = createContext<AuthState>({user: null});
+const AuthContext = createContext<AuthState>({
+    user: null,
+    isAdmin: false
+});
 
 
 export const AuthProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
     // user object
     const [user, setUser] = useState<User | null>(null);
+    const [isAdmin, setIsAdmin] = useState<boolean>(false);
 
     // subscribe to changes
     useEffect(() => {
@@ -35,11 +41,22 @@ export const AuthProvider: React.FC<React.PropsWithChildren> = ({ children }) =>
 
     }, []);
 
+    // update admin information
+    useEffect(() => {
+        if (user) {
+            const admin = ADMIN_EMAILS.includes(user.email as string)
+            setIsAdmin(admin)
+        } else {
+            setIsAdmin(false)
+        }
+    }, [user])
+
     // create the context functions
     const value = {
         login: (data: UserCredentials) => supabase.auth.signIn(data),
         logout: () => supabase.auth.signOut(),
-        user
+        user,
+        isAdmin
     };
 
     return <>
