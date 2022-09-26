@@ -5,7 +5,6 @@ import cloneDeep from 'lodash.clonedeep';
 import { Plot, Dataset, DataGroup } from "./feldbuch.model";
 import { supabase } from './supabase';
 import { useAuth } from "./auth";
-import { useIonToast } from "@ionic/react";
 
 
 export type SYNC_STATE = 'behind' | 'head' | 'unknown';
@@ -21,6 +20,7 @@ interface FeldbuchState {
     sync?: () => Promise<boolean>,
     upload?: () => Promise<void>,
     addDataset?: (data: Dataset) => Promise<void>
+    importAllUploads?: () => Promise<Dataset[]>
 }
 
 const initialState: FeldbuchState = {
@@ -230,6 +230,23 @@ export const FeldbuchProvider: React.FC<React.PropsWithChildren> = ({ children }
         })
     }
 
+    // some helper function to work with all updates
+    const importAllUploads = (): Promise<Dataset[]> => {
+        return new Promise((resolve, reject) => {
+            // load data
+            supabase.from('updates').select().then(({error, data}) => {
+                // if there was an error, reject the Promise
+                if (error) reject(error.message)
+                if (data) {
+                    resolve(data)
+                } else {
+                    resolve([])
+                }
+
+            })
+        })
+    }
+
     // create the context function
     const value = {
         dirty: dirty,
@@ -237,11 +254,12 @@ export const FeldbuchProvider: React.FC<React.PropsWithChildren> = ({ children }
         plots: plots,
         datasets: datasets,
         updates: dataUpdates,
-        dataGroups: dataGroups,
-        checkSyncState: checkSyncState,
-        sync: sync,
-        upload: upload,
-        addDataset: addDataset
+        dataGroups,
+        checkSyncState,
+        sync,
+        upload,
+        addDataset,
+        importAllUploads
     }
 
 
