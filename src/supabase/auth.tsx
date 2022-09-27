@@ -23,7 +23,7 @@ export const AuthProvider: React.FC<React.PropsWithChildren> = ({ children }) =>
     // user object
     const [user, setUser] = useState<User | null>(null);
     const [isAdmin, setIsAdmin] = useState<boolean>(false);
-    console.log(REACT_APP_REDIRECT_URL)
+
     // subscribe to changes
     useEffect(() => {
         // check for a session
