@@ -43,6 +43,9 @@ jobs:
       
       - name: Install ionic
         run: npm i --save -g @ionic/cli
+
+      - name: Replace env file
+        run: echo "REDIRECT_URL=https://feldbuch.hydrocode.de" > .env
         
       - name: Build package
         run: ionic build --pulic-url=feldbuch.hydrocode.de --engine=browser --ci=false
