@@ -40,6 +40,9 @@ jobs:
       
       - name: Install dependencies
         run: npm i
+      
+      - name: Install ionic
+        run: npm i --save -g @ionic/cli
         
       - name: Build package
         run: ionic build --pulic-url=feldbuch.hydrocode.de --engine=browser --ci=false
