@@ -3,6 +3,7 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { supabase } from './supabase';
 
 const ADMIN_EMAILS = ['mareike.mohr@waldbau.uni-freiburg.de', 'mirko@hydrocode.de']
+const { REACT_APP_REDIRECT_URL } = process.env;
 
 interface AuthState {
     user: User | null,
@@ -22,7 +23,7 @@ export const AuthProvider: React.FC<React.PropsWithChildren> = ({ children }) =>
     // user object
     const [user, setUser] = useState<User | null>(null);
     const [isAdmin, setIsAdmin] = useState<boolean>(false);
-
+    console.log(REACT_APP_REDIRECT_URL)
     // subscribe to changes
     useEffect(() => {
         // check for a session
@@ -53,7 +54,7 @@ export const AuthProvider: React.FC<React.PropsWithChildren> = ({ children }) =>
 
     // create the context functions
     const value = {
-        login: (data: UserCredentials) => supabase.auth.signIn(data),
+        login: (data: UserCredentials) => supabase.auth.signIn(data, {redirectTo: REACT_APP_REDIRECT_URL}),
         logout: () => supabase.auth.signOut(),
         user,
         isAdmin
