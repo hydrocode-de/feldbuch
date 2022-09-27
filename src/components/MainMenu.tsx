@@ -11,7 +11,7 @@ const MainMenu: React.FC<MainMenuProps> = ({ contentId }) => {
     const { isAdmin } = useAuth();
 
     return (
-        <IonMenu type="push" contentId={contentId ? contentId : 'main-content'}>
+        <IonMenu type="overlay" contentId={contentId ? contentId : 'main-content'}>
             <IonHeader>
                 <IonToolbar>
                     <IonTitle>Feldbuch</IonTitle>
