@@ -48,7 +48,7 @@ jobs:
         run: echo "REACT_APP_REDIRECT_URL=https://feldbuch.hydrocode.de" > .env
         
       - name: Build package
-        run: ionic build --pulic-url=feldbuch.hydrocode.de --engine=browser --ci=false
+        run: ionic build --prod --pulic-url=feldbuch.hydrocode.de --engine=browser --ci=false
         env:
           CI: false
         
