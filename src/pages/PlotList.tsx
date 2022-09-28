@@ -1,4 +1,5 @@
 import { IonButton, IonButtons, IonCol, IonContent, IonGrid, IonHeader, IonItem, IonLabel, IonList, IonMenuButton, IonMenuToggle, IonPage, IonRow, IonText, IonTitle, IonToolbar } from "@ionic/react";
+import FilterButton from "../components/FilterButton";
 import LoginButton from "../components/LoginButton";
 import MainMenu from "../components/MainMenu";
 import PlotListItem from "../components/PlotListItem";
@@ -22,6 +23,7 @@ const PlotList: React.FC = () => {
                         </IonButtons>
                         <IonTitle>Stammdaten</IonTitle>
                         <IonButtons slot="end">
+                            <FilterButton fill="clear" />
                             <LoginButton slot="end" fill="clear" />
                         </IonButtons>
                     </IonToolbar>

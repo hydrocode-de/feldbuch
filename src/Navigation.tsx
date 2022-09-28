@@ -12,21 +12,21 @@ const Navigation: React.FC = () => {
     return (
         <IonReactRouter>
           <IonRouterOutlet>
+          <Route path="/login" exact>
+              <Login />
+            </Route>
             <Route path="/" exact={true}>
               <Redirect to="/list" />
             </Route>
-            <Route path="/list" exact>
-              <PlotList />
-            </Route>
-            <Route path="/login" exact>
-              <Login />
-            </Route>
-            <Route path="/list/:id" exact>
-              <ViewPlot />
-            </Route>
-            <Route path="/list/:id/add" exact>
-              <AddUpdates />
-            </Route>
+              <Route path="/list" exact>
+                <PlotList />
+              </Route>
+              <Route path="/list/:id" exact>
+                <ViewPlot />
+              </Route>
+              <Route path="/list/:id/add" exact>
+                <AddUpdates />
+              </Route>
             <Route path="/updates">
               <UpdatesList />
             </Route>

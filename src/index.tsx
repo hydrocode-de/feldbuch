@@ -6,6 +6,7 @@ import reportWebVitals from './reportWebVitals';
 
 import { AuthProvider } from './supabase/auth';
 import { FeldbuchProvider } from './supabase/feldbuch';
+import { FilterProvider } from './features/filter';
 
 const container = document.getElementById('root');
 const root = createRoot(container!);
@@ -13,7 +14,9 @@ root.render(
   <React.StrictMode>
     <AuthProvider>
       <FeldbuchProvider>
-        <App />
+        <FilterProvider>
+          <App />
+        </FilterProvider>
       </FeldbuchProvider>
     </AuthProvider>
   </React.StrictMode>
