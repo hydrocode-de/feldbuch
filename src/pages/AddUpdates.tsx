@@ -1,10 +1,10 @@
-import { IonBackButton, IonButton, IonButtons, IonContent, IonHeader, IonItem, IonLabel, IonPage, IonSelect, IonSelectOption, IonTitle, IonToolbar, useIonToast } from "@ionic/react";
+import { IonBackButton, IonButtons, IonContent, IonHeader, IonItem, IonLabel, IonPage, IonSelect, IonSelectOption, IonTitle, IonToolbar, useIonToast } from "@ionic/react";
 import { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router"
 import DataForm from "../components/DataForm";
 import { useDatasetFilter } from "../features/filter";
 import { useFeldbuch } from "../supabase/feldbuch"
-import { DataGroup, Dataset, Plot } from "../supabase/feldbuch.model";
+import { Dataset, Plot } from "../supabase/feldbuch.model";
 
 const AddUpdates: React.FC = () => {
     // component state
