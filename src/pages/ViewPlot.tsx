@@ -3,6 +3,7 @@ import { add } from 'ionicons/icons'
 import { useEffect, useState } from "react";
 import { useParams } from "react-router"
 import LoginButton from "../components/LoginButton";
+import { useDatasetFilter } from "../features/filter";
 import { useAuth } from "../supabase/auth";
 
 
@@ -19,7 +20,8 @@ const ViewPlot: React.FC = () => {
     const params = useParams<{id: string}>();
 
     // use Feldbuch context
-    const { plots, datasets, updates } = useFeldbuch();
+    const { datasets, updates } = useFeldbuch();
+    const { filteredPlots: plots } = useDatasetFilter();
 
     // check if the user is logged in
     const { user } = useAuth();

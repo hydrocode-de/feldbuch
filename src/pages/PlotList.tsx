@@ -1,17 +1,28 @@
-import { IonButton, IonButtons, IonCol, IonContent, IonGrid, IonHeader, IonItem, IonLabel, IonList, IonMenuButton, IonMenuToggle, IonPage, IonRow, IonText, IonTitle, IonToolbar } from "@ionic/react";
+import { getPlatforms, IonButton, IonButtons, IonCol, IonContent, IonGrid, IonHeader, IonItem, IonLabel, IonList, IonMenuButton, IonMenuToggle, IonPage, IonRow, IonText, IonTitle, IonToolbar } from "@ionic/react";
+import FilterChipList from "../components/FilterChipList";
 import FilterButton from "../components/FilterButton";
 import LoginButton from "../components/LoginButton";
 import MainMenu from "../components/MainMenu";
 import PlotListItem from "../components/PlotListItem";
 import SyncButton from "../components/SyncButton";
+import { useDatasetFilter } from "../features/filter";
 import { useAuth } from "../supabase/auth";
 import { useFeldbuch } from "../supabase/feldbuch"
+import { platform } from "os";
 
 const PlotList: React.FC = () => {
-    // use the Feldbuch context
-    const { plots } = useFeldbuch();
+    // use the filter context for a filtered list
+    const { filteredPlots: plots } = useDatasetFilter();
+    
+    // handle authentication
     const { user } = useAuth();
 
+    // check the general sync state
+    const { synced } = useFeldbuch();
+
+    // get the platform
+    const platforms = getPlatforms()
+    
     return (
         <>
             <MainMenu />
@@ -23,6 +34,7 @@ const PlotList: React.FC = () => {
                         </IonButtons>
                         <IonTitle>Stammdaten</IonTitle>
                         <IonButtons slot="end">
+                            {platforms.includes('desktop') ? <FilterChipList /> : null }
                             <FilterButton fill="clear" />
                             <LoginButton slot="end" fill="clear" />
                         </IonButtons>
@@ -39,6 +51,7 @@ const PlotList: React.FC = () => {
 
                         { plots.length > 0 ? (
                             <IonList>
+                                { !platforms.includes('desktop') ? <IonItem><FilterChipList /></IonItem> : null }
                                 { plots.map((plot, idx) => <PlotListItem key={idx} plot={plot} />) }
                             </IonList>
                         ) : (
@@ -47,13 +60,14 @@ const PlotList: React.FC = () => {
                                     <IonRow className="ion-justify-content-center">
                                     <div style={{display: 'flex', flexDirection: 'column'}}>
                                     <IonLabel color="warning" className="ion-text-wrap">
-                                        Keine lokalen Daten gefunden.
-                                        { user ? 'Versuche dich mit der Datenbank zu synchonisieren' : 'Zum Synchronisieren musst du dich einloggen.'}
+                                        {synced !== 'unknown' ? 'No data applies to this filter.' : 'No local data found.'}
+                                        &nbsp;
+                                        { synced !=='head' && user ? 'Try synchronizing with the database.' : 'To synchronize you need to be logged in.'}
                                     </IonLabel>
-                                    { user ? (
+                                    { synced !== 'head' && user ? (
                                         <SyncButton expand="block" fill="outline" />
                                     ) : (
-                                        <IonButton color="primary" fill="outline" routerLink="/login" routerDirection="forward">zum Login</IonButton>
+                                        <IonButton color="primary" fill="outline" routerLink="/login" routerDirection="forward">LOGIN</IonButton>
                                     )}
                                     </div>
                                     </IonRow>
