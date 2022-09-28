@@ -2,19 +2,22 @@ import { IonBackButton, IonButton, IonButtons, IonContent, IonHeader, IonItem, I
 import { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router"
 import DataForm from "../components/DataForm";
+import { useDatasetFilter } from "../features/filter";
 import { useFeldbuch } from "../supabase/feldbuch"
 import { DataGroup, Dataset, Plot } from "../supabase/feldbuch.model";
 
 const AddUpdates: React.FC = () => {
     // component state
     const [plot, setPlot] = useState<Plot>();
-    const [activeGroup, setActiveGroup] = useState<DataGroup>();
 
     // get the url query params
     const params = useParams<{id: string}>()
 
-    // load the feldbuch provider
+    // load the feldbuch context
     const { plots, dataGroups, addDataset } = useFeldbuch();
+
+    // load the filter context
+    const { group, setGroup } = useDatasetFilter();
 
     // load a navigation history
     const history = useHistory();
@@ -44,18 +47,19 @@ const AddUpdates: React.FC = () => {
                     </IonButtons>
                     <IonTitle>
                         {plot ? `individual ${plot.individual} - `: ''}
-                        {activeGroup ? `neue ${activeGroup.long_name}` : 'Datenaufnahme'}
+                        {group ? `neue ${group.long_name}` : 'Datenaufnahme'}
                     </IonTitle>
                     <IonSelect 
                         slot="end" 
-                        onIonChange={e => setActiveGroup(dataGroups.find(g => g.id === e.target.value))}
+                        onIonChange={e => setGroup(Number(e.target.value))}
                         interface="action-sheet"
                         placeholder="Bitte Aufnahmeart wählen"
+                        value={group ? group.id : null}
                     >
                         <IonItem>
-                            {dataGroups.map((group, idx) => (
-                                <IonSelectOption key={idx} value={group.id}>
-                                    {group.long_name} ({group.short_name})
+                            {dataGroups.map((g, idx) => (
+                                <IonSelectOption key={idx} value={g.id}>
+                                    {g.long_name} ({g.short_name})
                                 </IonSelectOption>
                             ))}
                         </IonItem>
@@ -64,8 +68,8 @@ const AddUpdates: React.FC = () => {
             </IonHeader>
 
             <IonContent fullscreen>
-                { plot && activeGroup ? (
-                    <DataForm group={activeGroup} plot_id={plot.id} onSave={onSave} />
+                { plot ? (
+                    <DataForm plot_id={plot.id} onSave={onSave} />
                 ) : <IonLabel className="ion-text-center"><p>Wähle zuerst die Art der Datenaufnahme</p></IonLabel> }
                 
             </IonContent>

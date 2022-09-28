@@ -1,35 +1,31 @@
 import { IonButton, IonInput, IonItem, IonLabel, IonList, IonSelect, IonSelectOption, IonTextarea, IonToggle } from "@ionic/react";
 import { useEffect, useState } from "react";
+import { useDatasetFilter } from "../features/filter";
 import { DataGroup, Dataset } from "../supabase/feldbuch.model"
 
 interface DataFormProps {
-    group: DataGroup,
     plot_id: number,
     onSave?: (data: Dataset) => void,
 }
 
-const DataForm: React.FC<DataFormProps> = ({group, plot_id, onSave }) => {
+const DataForm: React.FC<DataFormProps> = ({plot_id, onSave }) => {
     // component state
     const [data, setData] = useState<{[key: string]: any}>({})
-    const [currentGroup, setCurrentGroup] = useState<string>('')
-
-    useEffect(() => {
-        if (currentGroup !== group.short_name) {
-            setData({})
-            setCurrentGroup(group.short_name)
-        }
-    }, [group])
+    const { group } = useDatasetFilter();
 
     // save handler
     const saveHandler = () => {
         // create the object
-        const dataset: Dataset = {plot_id, data, group_id: group.id}
+        const dataset: Dataset = {plot_id, data, group_id: group!.id}
         onSave!(dataset)
     }
     
     // switch the form
     let form: any;
-    switch (currentGroup) {
+    if (!group) {
+        return <IonItem><IonLabel style={{textAlign: 'center'}}>Please select the data type first</IonLabel></IonItem>
+    }
+    switch (group.short_name) {
         case 'g1':
             form = <>
                 <IonItem>

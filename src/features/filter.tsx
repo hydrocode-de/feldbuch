@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react"
 import { useFeldbuch } from "../supabase/feldbuch"
-import { Plot } from "../supabase/feldbuch.model"
+import { DataGroup, Plot } from "../supabase/feldbuch.model"
 
 export const SITE = ['Weilheim', 'Albbruck', 'Unteralpfen'] as const
 export const TREATMENT = ['full clearence' , 'partial harvest' , 'no harvest' , 'high stumps'] as const
@@ -19,9 +19,11 @@ export interface Filter {
 interface FilterState {
     filteredPlots: Plot[],
     filter: Filter,
+    group?: DataGroup,
     addFilter: (filterOptions: Filter) => void,
     removeFilter: (filterKeys: Array<keyof Filter>) => void
-    clearFilter: () => void
+    clearFilter: () => void,
+    setGroup: (groupId: number) => void
 }
 
 const initialState: FilterState = {
@@ -29,7 +31,8 @@ const initialState: FilterState = {
     filter: {site: 'Weilheim', treatment: 'partial harvest'},
     addFilter: (filterOptions: Filter) => console.log('Filter not initialized'),
     removeFilter: (filterKeys: Array<keyof Filter>) => console.log('Filter not initialized'),
-    clearFilter: () => console.log('Filter not initialized')
+    clearFilter: () => console.log('Filter not initialized'),
+    setGroup: (groupId: number) => console.log('Filter not initialized') 
 }
 
 // create the context
@@ -39,9 +42,10 @@ export const FilterProvider: React.FC<React.PropsWithChildren> = ({ children }) 
     // context state
     const [filteredPlots, setFilteredPlots] = useState<Plot[]>([])
     const [filter, setFilter] = useState<Filter>(initialState.filter)
+    const [currentGroup, setCurrentGroup] = useState<DataGroup>();
 
     // load the current plot list from feldbuch
-    const { plots } = useFeldbuch()
+    const { plots, dataGroups } = useFeldbuch()
 
     // effect functions
     useEffect(() => {
@@ -69,13 +73,19 @@ export const FilterProvider: React.FC<React.PropsWithChildren> = ({ children }) 
     // clear Filter
     const clearFilter = () => setFilter({})
 
+    // update the data Group
+    const setGroup = (groupId: number) => setCurrentGroup(dataGroups.find(g => g.id===groupId))
+
+
     // create the current context object
     const value = {
         filteredPlots,
         filter,
         addFilter,
         removeFilter,
-        clearFilter
+        clearFilter,
+        group: currentGroup,
+        setGroup
     }
 
     return <>

@@ -8,7 +8,6 @@ import SyncButton from "../components/SyncButton";
 import { useDatasetFilter } from "../features/filter";
 import { useAuth } from "../supabase/auth";
 import { useFeldbuch } from "../supabase/feldbuch"
-import { platform } from "os";
 
 const PlotList: React.FC = () => {
     // use the filter context for a filtered list
