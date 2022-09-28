@@ -1,7 +1,8 @@
-import { IonBackButton, IonButtons, IonContent, IonFab, IonFabButton, IonHeader, IonIcon, IonItem, IonLabel, IonList, IonListHeader, IonPage, IonTitle, IonToolbar } from "@ionic/react";
+import { IonAccordionGroup, IonBackButton, IonButtons, IonContent, IonFab, IonFabButton, IonHeader, IonIcon, IonItem, IonLabel, IonList, IonListHeader, IonPage, IonTitle, IonToolbar } from "@ionic/react";
 import { add } from 'ionicons/icons'
 import { useEffect, useState } from "react";
 import { useParams } from "react-router"
+import DataAccordion from "../components/DataAccordion";
 import LoginButton from "../components/LoginButton";
 import { useDatasetFilter } from "../features/filter";
 import { useAuth } from "../supabase/auth";
@@ -60,14 +61,18 @@ const ViewPlot: React.FC = () => {
                     <IonListHeader>
                         <IonTitle>Existierende Daten</IonTitle>
                     </IonListHeader>
-                    {datasetList.map((data, idx) => <IonItem key={idx}><IonLabel>DATASET TYPE: { data.group_id }</IonLabel></IonItem>)}
+                    <IonAccordionGroup>
+                        { datasetList.map((data, idx) => <DataAccordion dataset={data} index={String(idx)} key={idx} />) }
+                    </IonAccordionGroup>
                 </IonList>
 
                 <IonList>
                     <IonListHeader>
                         <IonTitle>Updates</IonTitle>
                     </IonListHeader>
-                    {dataUpdateList.map((data, idx) => <IonItem key={idx}><IonLabel>{ data.plot_id  }</IonLabel></IonItem>)}
+                    <IonAccordionGroup>
+                        { dataUpdateList.map((data, idx) => <DataAccordion dataset={data} index={String(idx)} key={idx} />) }
+                    </IonAccordionGroup>
                 </IonList>
 
                 <IonFab vertical="bottom" horizontal="end" slot="fixed">
