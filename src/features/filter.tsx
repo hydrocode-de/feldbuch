@@ -10,7 +10,7 @@ export const PLACE = ['free space', 'under tree', 'stump', 'high stump', 'tree']
 export interface Filter {
     site?: typeof SITE[number]
     treatment?: typeof TREATMENT[number]
-    number?: number
+    number?: string
     individual?: typeof INDIVIDUAL[number]
     species?: string
     place?: typeof PLACE[number]
@@ -28,7 +28,7 @@ interface FilterState {
 
 const initialState: FilterState = {
     filteredPlots: [],
-    filter: {site: 'Weilheim', treatment: 'partial harvest'},
+    filter: {site: 'Weilheim', treatment: 'partial harvest', number: "1"},
     addFilter: (filterOptions: Filter) => console.log('Filter not initialized'),
     removeFilter: (filterKeys: Array<keyof Filter>) => console.log('Filter not initialized'),
     clearFilter: () => console.log('Filter not initialized'),
