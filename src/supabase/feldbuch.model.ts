@@ -6,11 +6,9 @@ export interface Plot {
     place: string,
     number: number,
     individual: string,
-    user_id: string,
-    pm_replaced: boolean,
-    measurement_time: Date,
+    pm_replaced: boolean,   
     created_at: Date,
-    wkt: string,
+    geom: string,
 }
 
 export interface Dataset {
