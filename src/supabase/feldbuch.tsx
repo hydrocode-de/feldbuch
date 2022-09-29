@@ -146,14 +146,14 @@ export const FeldbuchProvider: React.FC<React.PropsWithChildren> = ({ children }
             
             // get the updates candidates
             // this one is causing problems because it is synced twice
-            const updatesQuery = supabase.from('updates').select().then(({error, data}) => {
-                if (error) reject(error.message)
-                if (data) {
-                    return data as Dataset[]
-                } else {
-                    return []
-                }
-            }).then(updates => localforage.setItem('updates', updates))
+            // const updatesQuery = supabase.from('updates').select().then(({error, data}) => {
+            //     if (error) reject(error.message)
+            //     if (data) {
+            //         return data as Dataset[]
+            //     } else {
+            //         return []
+            //     }
+            // }).then(updates => localforage.setItem('updates', updates))
 
             // update the checksums after all other are finished
             return Promise.all([plotQuery, groupsQuery]).then(() => {
