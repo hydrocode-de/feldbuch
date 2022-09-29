@@ -21,6 +21,7 @@ interface FeldbuchState {
     upload?: () => Promise<void>,
     addDataset?: (data: Dataset) => Promise<void>
     importAllUploads?: () => Promise<Dataset[]>
+    clearLocalData?: () => Promise<void>
 }
 
 const initialState: FeldbuchState = {
@@ -60,22 +61,38 @@ export const FeldbuchProvider: React.FC<React.PropsWithChildren> = ({ children }
         if (syncStore) {
             // get plot data
             localforage.getItem('plots', (err, value: Plot[] | null) => {
-                if (!err && value) setPlots(value)
+                if (!err && value) {
+                    setPlots(value)
+                } else {
+                    setPlots([])
+                }
             });
 
             // get groups lookup
             localforage.getItem('groups', (err, value: DataGroup[] | null) => {
-                if (!err && value) setDataGroups(value)
+                if (!err && value) {
+                    setDataGroups(value)
+                } else {
+                    setDataGroups([])
+                }
             })
 
             // get Datasets
             localforage.getItem('datasets', (err, value: Dataset[] | null) => {
-                if (!err && value) setDatasets(value)
+                if (!err && value) {
+                    setDatasets(value)
+                } else {
+                    setDatasets([])
+                }
             })
 
             // get stored Updates
             localforage.getItem('updates', (err, value: Dataset[] | null) => {
-                if (!err && value) setDataUpdates(value)
+                if (!err && value) {
+                    setDataUpdates(value)
+                } else {
+                    setDataUpdates([])
+                }
             })
             setSyncStore(false)
         }
@@ -248,6 +265,15 @@ export const FeldbuchProvider: React.FC<React.PropsWithChildren> = ({ children }
         })
     }
 
+    // clear the local data
+    const clearLocalData = (): Promise<void> => {
+        return localforage.clear().then(() => {
+            // sync local
+            setSyncStore(true)
+            return Promise.resolve()
+        }).catch(error => Promise.reject(error))
+    }
+
     // create the context function
     const value = {
         dirty: dirty,
@@ -260,7 +286,8 @@ export const FeldbuchProvider: React.FC<React.PropsWithChildren> = ({ children }
         sync,
         upload,
         addDataset,
-        importAllUploads
+        importAllUploads,
+        clearLocalData
     }
 
 

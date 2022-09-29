@@ -4,7 +4,7 @@ export interface Plot {
     treatment: string,
     species: string,
     place: string,
-    number: number,
+    number: string,
     individual: string,
     pm_replaced: boolean,   
     created_at: Date,
