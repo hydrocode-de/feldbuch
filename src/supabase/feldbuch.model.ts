@@ -6,9 +6,10 @@ export interface Plot {
     place: string,
     number: string,
     individual: string,
+    lon: number,
+    lat: number,
     pm_replaced: boolean,   
     created_at: Date,
-    geom: string,
 }
 
 export interface Dataset {
