@@ -4,9 +4,13 @@ import App from './App';
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 import reportWebVitals from './reportWebVitals';
 
+import { defineCustomElements } from '@ionic/pwa-elements/loader'
+
 import { AuthProvider } from './supabase/auth';
 import { FeldbuchProvider } from './supabase/feldbuch';
 import { FilterProvider } from './features/filter';
+
+defineCustomElements(window)
 
 const container = document.getElementById('root');
 const root = createRoot(container!);

@@ -2,7 +2,7 @@ import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
   appId: 'io.ionic.starter',
-  appName: 'feldbuch',
+  appName: 'Feldbuch',
   webDir: 'build',
   bundledWebRuntime: false
 };

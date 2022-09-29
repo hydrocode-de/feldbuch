@@ -1,6 +1,6 @@
 {
-  "short_name": "Ionic App",
-  "name": "My Ionic App",
+  "short_name": "Feldbuch",
+  "name": "Wiederbewaldung Waldshut",
   "icons": [
     {
       "src": "assets/icon/favicon.png",
@@ -8,13 +8,19 @@
       "type": "image/x-icon"
     },
     {
-      "src": "assets/icon/icon.png",
+      "src": "assets/icon/logo.png",
       "type": "image/png",
       "sizes": "512x512",
       "purpose": "maskable"
+    },
+    {
+      "src": "assets/icon/logo.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any"
     }
   ],
-  "start_url": ".",
+  "start_url": "feldbuch.hydrocode.de",
   "display": "standalone",
   "theme_color": "#ffffff",
   "background_color": "#ffffff"
