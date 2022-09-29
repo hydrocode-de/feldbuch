@@ -11,7 +11,7 @@ const Settings: React.FC = () => {
         <>
         <MainMenu />
         <IonPage id="main-content">
-            <IonHeader>
+            <IonHeader collapse="fade">
                 <IonToolbar>
                     <IonButtons slot="start">
                         <IonMenuButton />

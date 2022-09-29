@@ -138,7 +138,10 @@ export const FeldbuchProvider: React.FC<React.PropsWithChildren> = ({ children }
             const dataQuery = supabase.from('datasets').select().then(({error, data}) => {
                 if (error) reject(error.message)
                 if (data) {
-                    return data as Dataset[]
+                    const datasets: Dataset[] = data.map(({data, ...opts}) => {
+                        return {...opts, data: JSON.parse(data)}
+                    })
+                    return datasets
                 } else {
                     return []
                 }
