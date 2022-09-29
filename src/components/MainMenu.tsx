@@ -1,5 +1,5 @@
 import { IonContent, IonHeader, IonIcon, IonItem, IonLabel, IonList, IonMenu, IonTitle, IonToolbar } from "@ionic/react";
-import { list, podiumOutline } from 'ionicons/icons';
+import { list, podiumOutline, cog } from 'ionicons/icons';
 import { useAuth } from "../supabase/auth";
 
 interface MainMenuProps {
@@ -20,12 +20,16 @@ const MainMenu: React.FC<MainMenuProps> = ({ contentId }) => {
             <IonContent>
                 <IonList>
                     <IonItem routerLink="/list" routerDirection="root">
-                        <IonLabel>Stammdaten</IonLabel>
+                        <IonLabel>Base data</IonLabel>
                         <IonIcon icon={list} slot="start"/>
                     </IonItem>
                     <IonItem disabled={!isAdmin} routerLink="/updates" routerDirection="root">
-                        <IonLabel>Änderungen</IonLabel>
+                        <IonLabel>Update suggestions</IonLabel>
                         <IonIcon icon={podiumOutline} slot="start"/>
+                    </IonItem>
+                    <IonItem routerLink="/settings" routerDirection="root">
+                        <IonLabel>Settings</IonLabel>
+                        <IonIcon icon={cog} slot="start" />
                     </IonItem>
                 </IonList>
             </IonContent>

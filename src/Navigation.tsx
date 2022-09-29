@@ -7,6 +7,7 @@ import PlotList from './pages/PlotList';
 import ViewPlot from './pages/ViewPlot';
 import AddUpdates from './pages/AddUpdates';
 import UpdatesList from './pages/UpdatesList';
+import Settings from './pages/Settings';
 
 const Navigation: React.FC = () => {
     return (
@@ -29,6 +30,9 @@ const Navigation: React.FC = () => {
               </Route>
             <Route path="/updates">
               <UpdatesList />
+            </Route>
+            <Route path="/settings" exact>
+              <Settings />
             </Route>
           </IonRouterOutlet>
         </IonReactRouter>
