@@ -33,7 +33,7 @@ const AddUpdates: React.FC = () => {
     const onSave = (data: Dataset) => {
         // add the dataset
         addDataset!(data).then(() => {
-            present({message: 'Der Datensatz wurde lokal gespeichert', duration: 2000, position: 'top', color: 'success'})
+            present({message: 'Your updates have been saved locally.', duration: 2000, position: 'top', color: 'success'})
             history.replace('/list')
         })
     }

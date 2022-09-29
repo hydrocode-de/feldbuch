@@ -42,7 +42,7 @@ const ViewPlot: React.FC = () => {
 
     return (
         <IonPage>
-            <IonHeader translucent>
+            <IonHeader collapse="fade" translucent>
                 <IonToolbar>
                     <IonButtons slot="start">
                         <IonBackButton defaultHref="/list" />
@@ -59,7 +59,7 @@ const ViewPlot: React.FC = () => {
 
                 <IonList>
                     <IonListHeader>
-                        <IonTitle>Existierende Daten</IonTitle>
+                        <IonTitle>Existing data</IonTitle>
                     </IonListHeader>
                     <IonAccordionGroup>
                         { datasetList.map((data, idx) => <DataAccordion dataset={data} index={String(idx)} key={idx} />) }
@@ -68,7 +68,7 @@ const ViewPlot: React.FC = () => {
 
                 <IonList>
                     <IonListHeader>
-                        <IonTitle>Updates</IonTitle>
+                        <IonTitle>Your Updates</IonTitle>
                     </IonListHeader>
                     <IonAccordionGroup>
                         { dataUpdateList.map((data, idx) => <DataAccordion dataset={data} index={String(idx)} key={idx} />) }
