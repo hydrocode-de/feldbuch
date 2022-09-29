@@ -1,11 +1,15 @@
-import { IonAccordion, IonAccordionGroup, IonBadge, IonButton, IonButtons, IonContent, IonHeader, IonItem, IonLabel, IonList, IonListHeader, IonMenuButton, IonPage, IonTitle, IonToolbar } from "@ionic/react"
+import { IonAccordion, IonAccordionGroup, IonBadge, IonButton, IonButtons, IonContent, IonHeader, IonItem, IonLabel, IonList, IonListHeader, IonMenuButton, IonNote, IonPage, IonTitle, IonToolbar } from "@ionic/react"
 import MainMenu from "../components/MainMenu"
 import SyncButton from "../components/SyncButton"
+import { useAuth } from "../supabase/auth"
 import { useFeldbuch } from "../supabase/feldbuch"
 
 const Settings: React.FC = () => {
     // load the local data 
     const { plots, datasets, updates, dataGroups, clearLocalData } = useFeldbuch()
+    
+    // load user data
+    const { user } = useAuth()
 
     return (
         <>
@@ -33,6 +37,7 @@ const Settings: React.FC = () => {
             </IonHeader>
 
             <IonAccordionGroup>
+
                 <IonAccordion value="local">
                     <IonItem slot="header">
                         <IonLabel>Local data cache</IonLabel>
@@ -56,6 +61,24 @@ const Settings: React.FC = () => {
                         </IonItem>
                         <IonButton color="danger" expand="full" onClick={clearLocalData}>DELETE</IonButton>
                     </IonList>    
+                </IonAccordion>
+
+                <IonAccordion value="user">
+                    <IonItem slot="header">
+                        <IonLabel>User data</IonLabel>
+                    </IonItem>
+                    <IonList slot="content">
+                        { !user ? (<IonNote className="ion-padding">You are not logged in</IonNote>) : (<>
+                               <IonItem>
+                                    <IonLabel slot="start">User ID</IonLabel>
+                                    <IonLabel slot="end">{user.id}</IonLabel>
+                               </IonItem>
+                               <IonItem>
+                                <IonLabel slot="start">E-Mail</IonLabel>
+                                <IonLabel slot="end">{user.email}</IonLabel>
+                               </IonItem>
+                            </>)}
+                    </IonList>
                 </IonAccordion>
             </IonAccordionGroup>
 
