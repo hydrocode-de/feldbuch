@@ -48,6 +48,10 @@ const FilterModal: React.FC<FilterModalProps> = ({ onSave }) => {
                     </IonSelect>
                 </IonItem>
                 <IonItem>
+                    <IonLabel position="fixed">Number</IonLabel>
+                    <IonInput type="number" min="0" max="280" value={filter.number} onIonChange={e => filterChangeHandler('number', e.target.value as string)} />
+                </IonItem>
+                <IonItem>
                     <IonLabel>Individual</IonLabel>
                     <IonSelect interface="action-sheet" value={filter.individual} onIonChange={e => filterChangeHandler('individual', e.target.value)}>
                         <IonSelectOption value="remove">- no filter by individual -</IonSelectOption>
@@ -56,17 +60,6 @@ const FilterModal: React.FC<FilterModalProps> = ({ onSave }) => {
                     { filter.individual  ? (
                         <IonButtons slot="end">
                             <IonButton color="danger" onClick={() => filterChangeHandler('individual', 'remove')}>
-                                <IonIcon slot="icon-only" icon={closeCircle} />
-                            </IonButton>
-                        </IonButtons>
-                    ) : null }
-                </IonItem>
-                <IonItem>
-                    <IonLabel position="fixed">Number</IonLabel>
-                    <IonInput type="number" min="0" max="280" value={filter.number} onIonChange={e => filterChangeHandler('number', e.target.value as string)} />
-                    { filter.number  ? (
-                        <IonButtons slot="end">
-                            <IonButton color="danger" onClick={() => filterChangeHandler('number', 'remove')}>
                                 <IonIcon slot="icon-only" icon={closeCircle} />
                             </IonButton>
                         </IonButtons>
