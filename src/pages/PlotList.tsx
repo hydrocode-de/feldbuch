@@ -50,7 +50,7 @@ const PlotList: React.FC = () => {
 
                         { plots.length > 0 ? (
                             <IonList>
-                                { !platforms.includes('desktop') ? <IonItem><FilterChipList /></IonItem> : null }
+                                { !platforms.includes('desktop')|| true ? <IonItem><FilterChipList /></IonItem> : null }
                                 { plots.map((plot, idx) => <PlotListItem key={idx} plot={plot} />) }
                             </IonList>
                         ) : (

@@ -1,4 +1,4 @@
-import { IonAccordionGroup, IonBackButton, IonButtons, IonContent, IonFab, IonFabButton, IonHeader, IonIcon, IonItem, IonLabel, IonList, IonListHeader, IonPage, IonTitle, IonToolbar } from "@ionic/react";
+import { IonAccordion, IonAccordionGroup, IonBackButton, IonButtons, IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle, IonContent, IonFab, IonFabButton, IonHeader, IonIcon, IonItem, IonLabel, IonList, IonListHeader, IonPage, IonSegment, IonSegmentButton, IonTitle, IonToolbar } from "@ionic/react";
 import { add } from 'ionicons/icons'
 import { useEffect, useState } from "react";
 import { useParams } from "react-router"
@@ -16,6 +16,7 @@ const ViewPlot: React.FC = () => {
     const [plot, setPlot] = useState<Plot>();
     const [datasetList, setDatasetList] = useState<Dataset[]>([]);
     const [dataUpdateList, setDataUpdateList] = useState<Dataset[]>([]);
+    const [activeSegment, setActiveSegment] = useState<'img' | 'map' | 'details'>('img')
 
     // get url query params
     const params = useParams<{id: string}>();
@@ -55,7 +56,47 @@ const ViewPlot: React.FC = () => {
             </IonHeader>
 
             <IonContent fullscreen>
-                <pre><code>{JSON.stringify(plot, null, 4)}</code></pre>
+                <IonCard>
+                <IonCardHeader>
+                        <IonCardSubtitle>{plot?.site}&nbsp;&nbsp;-&nbsp;&nbsp;{plot?.treatment}</IonCardSubtitle>
+                        <IonCardTitle>Number: {plot?.number}&nbsp;&nbsp;-&nbsp;&nbsp;<strong>Individual {plot?.individual}</strong></IonCardTitle>
+                    </IonCardHeader>
+                    {/* <IonSegment value={activeSegment} scrollable onIonChange={e => setActiveSegment(e.target.value as 'img' | 'map' | 'details')}>
+                        <IonSegmentButton value="img">
+                            <IonLabel>Show image</IonLabel>
+                        </IonSegmentButton>
+                        <IonSegmentButton value="map">
+                            <IonLabel>Show map</IonLabel>
+                        </IonSegmentButton>
+                        <IonSegmentButton value="details">
+                            <IonLabel>Show details</IonLabel>
+                        </IonSegmentButton>
+                    </IonSegment>
+                    { activeSegment === 'img' ? <img src="https://via.placeholder.com/1920x400" alt="Image" /> : null } */}
+                    
+
+                    <IonCardContent>
+                        <IonAccordionGroup>
+                        <IonAccordion value="detail">
+                            <IonItem slot="header"><IonLabel>Details</IonLabel></IonItem>
+                            <IonList slot="content">
+                                <IonItem>
+                                    <IonLabel slot="start">Place</IonLabel>
+                                    <IonLabel slot="end">{plot?.place}</IonLabel>
+                                </IonItem>
+                                <IonItem href={`https://en.wikipedia.org/wiki/${plot?.species}`} target="_blank">
+                                    <IonLabel slot="start">Species</IonLabel>
+                                    <IonLabel slot="end">{plot?.species}</IonLabel>
+                                </IonItem>
+                                <IonItem>
+                                    <IonLabel slot="start">PM replaced</IonLabel>
+                                    <IonLabel slot="end">{plot?.pm_replaced}</IonLabel>
+                                </IonItem>
+                            </IonList>
+                        </IonAccordion>
+                        </IonAccordionGroup>
+                    </IonCardContent>
+                </IonCard>
 
                 <IonList>
                     <IonListHeader>
