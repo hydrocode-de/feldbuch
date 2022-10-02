@@ -97,7 +97,8 @@ const ViewPlot: React.FC = () => {
                         </IonAccordionGroup>
                     </IonCardContent>
                 </IonCard>
-
+                
+                <IonCard><IonCardContent>
                 <IonList>
                     <IonListHeader>
                         <IonTitle>Existing data</IonTitle>
@@ -115,6 +116,7 @@ const ViewPlot: React.FC = () => {
                         { dataUpdateList.map((data, idx) => <DataAccordion dataset={data} index={String(idx)} key={idx} />) }
                     </IonAccordionGroup>
                 </IonList>
+                </IonCardContent></IonCard>
 
                 <IonFab vertical="bottom" horizontal="end" slot="fixed">
                     <IonFabButton color="success" disabled={!user} routerLink={`/list/${plot?.id}/add`} routerDirection="forward">
