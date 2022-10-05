@@ -20,10 +20,12 @@ const DataAccordion: React.FC<DataAccordionProps> = ({ dataset, index }) => {
             </IonItem>
             <div className="ion-no-padding" slot="content">
                 <IonList>
-                    { Object.entries(dataset.data).map(([key, value]) => (<IonItem>
-                        <IonLabel slot="start">{key.toUpperCase()}</IonLabel>
-                        <IonLabel slot="end">{String(value)}</IonLabel>
-                    </IonItem>)) }
+                    { Object.entries(dataset.data).map(([key, value]) => (
+                        <IonItem key={key}>
+                            <IonLabel slot="start">{key.toUpperCase()}</IonLabel>
+                            <IonLabel slot="end">{String(value)}</IonLabel>
+                        </IonItem>
+                    )) }
                 </IonList>
             </div>
         </IonAccordion>
