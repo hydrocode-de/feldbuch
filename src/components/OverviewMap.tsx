@@ -1,6 +1,6 @@
 import { IonSpinner } from '@ionic/react'
 import { GoogleMap, useJsApiLoader, Marker } from '@react-google-maps/api'
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Plot } from '../supabase/feldbuch.model'
 
 const { REACT_APP_GOOGLE_MAPS_API_KEY: API_KEY } = process.env
@@ -19,17 +19,27 @@ const OverviewMap: React.FC<OverviewMapProps> = ({ plot }) => {
     // create a component state to store the map object
     const [map, setMap] = useState<google.maps.Map | null>(null)
     const center = {lat: plot.lat, lng: plot.lon}
-    //const center = {lat: 47.1, lng: 7.9232}
+
 
     // create handler to initialize and unmount the map after js has loaded
     const onLoad = useCallback((map: google.maps.Map) => {
-        const bounds = new window.google.maps.LatLngBounds(center)
-        map.fitBounds(bounds)
-        map.setZoom(12)
-        map.setCenter(center)
-        setMap(map)
+        setMap(map);
     }, [])
     
+    useEffect(() => {
+        if (map) {
+            console.log('Updating the map...')
+            // set the map
+            map.setZoom(12)
+            map.setCenter(center)
+
+            // create the marker
+            const marker = new google.maps.Marker({position: center})
+            marker.setMap(map)
+        }
+        
+    }, [map, center])
+
     const onUnmount = useCallback(() => setMap(null), [])
 
     if (!isLoaded) {
@@ -38,14 +48,9 @@ const OverviewMap: React.FC<OverviewMapProps> = ({ plot }) => {
     return (
         <GoogleMap 
             mapContainerStyle={{width: '100%', height: '250px'}}
-            center={center}
-            zoom={6}
             onLoad={onLoad}
             onUnmount={onUnmount}
-        >
-                <Marker position={center} />
-            
-        </GoogleMap>
+        />
     )
 }
 
