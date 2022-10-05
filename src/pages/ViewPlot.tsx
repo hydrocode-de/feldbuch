@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router"
 import DataAccordion from "../components/DataAccordion";
 import LoginButton from "../components/LoginButton";
+import OverviewMap from "../components/OverviewMap";
 import { useDatasetFilter } from "../features/filter";
 import { useAuth } from "../supabase/auth";
 
@@ -57,6 +58,8 @@ const ViewPlot: React.FC = () => {
 
             <IonContent fullscreen>
                 <IonCard>
+                    { plot && plot!.lat ? <OverviewMap plot={plot} /> : null  }
+                    
                 <IonCardHeader>
                         <IonCardSubtitle>{plot?.site}&nbsp;&nbsp;-&nbsp;&nbsp;{plot?.treatment}</IonCardSubtitle>
                         <IonCardTitle>Number: {plot?.number}&nbsp;&nbsp;-&nbsp;&nbsp;<strong>Individual {plot?.individual}</strong></IonCardTitle>
