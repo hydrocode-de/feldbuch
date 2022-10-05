@@ -1,8 +1,12 @@
-import { IonChip, IonContent, IonHeader, IonIcon, IonLabel, IonSelect, IonSelectOption, IonTitle, IonToolbar, useIonModal } from "@ionic/react"
+import { IonChip, IonContent, IonHeader, IonIcon, IonLabel, IonSelect, IonSelectOption, IonTitle, IonToolbar, useIonActionSheet, useIonAlert, useIonModal } from "@ionic/react"
 import { closeCircle } from 'ionicons/icons'
-import React from "react"
-import { Filter, useDatasetFilter } from "../features/filter"
+import React, { useState } from "react"
+import { Filter, useDatasetFilter, SITE, TREATMENT } from "../features/filter"
 
+const filterValues = {
+    site: SITE,
+    treatment: TREATMENT
+}
 
 interface FilterModalProps {
     filter: Filter,
@@ -13,7 +17,7 @@ const FilterModal: React.FC<FilterModalProps> = ({filter, current, onChange}) =>
     return (<>
         <IonHeader>
             <IonToolbar>
-            <IonTitle>{ current }</IonTitle>
+            <IonTitle>Filter by { current }</IonTitle>
             </IonToolbar>
         </IonHeader>
         <IonContent fullscreen>
@@ -26,18 +30,51 @@ const FilterModal: React.FC<FilterModalProps> = ({filter, current, onChange}) =>
 }
 
 const FilterChipList: React.FC = () => {
+    // component state
+    const [currentChip, setCurrentChip] = useState<keyof Filter>();
+    
     // get the current filter
     const { filter, removeFilter } = useDatasetFilter();
 
-    const [present, dismiss] = useIonModal(<FilterModal onChange={() => console.log('filtered')}/>)
-    const onClick = (filter: string) => {
-        
+    const [ presentAlert ] = useIonAlert()
+    const [ present ] = useIonActionSheet()
+
+    const onClick = (filterKey: keyof Filter) => {
+        // presentAlert({
+        //     message: `Select ${filterKey}`,
+        //     buttons: ['OK', 'Cancel'],
+        //     inputs: [
+        //         {value: 'One', type: 'radio'},
+        //         {value: 'One', type: 'radio'},
+        //         {value: 'One', type: 'radio'},
+        //     ],
+        //     onDidDismiss: (e => console.log(e))
+        // })
+        present({
+            header: `Select ${filterKey}`,
+            buttons: [
+                {text: 'One', data: 'one'},
+                {text: 'Two', data: 'two'},
+                {text: 'Three', data: 'three'},
+                {text: 'One', data: 'one'},
+                {text: 'Two', data: 'two'},
+                {text: 'Three', data: 'three'},
+                {text: 'One', data: 'one'},
+                {text: 'Two', data: 'two'},
+                {text: 'Three', data: 'three'},
+                {text: 'One', data: 'one'},
+                {text: 'Two', data: 'two'},
+                {text: 'Three', data: 'three'},
+            
+            ],
+            onDidDismiss: e => console.log(e)
+        })
     }
     
     return <>
     {(Object.entries(filter) as Array<[keyof Filter, string]>).map(([key, value], idx) => {
         return (
-            <IonChip key={idx} onClick={() => removeFilter([key])} disabled={['site', 'treatment', 'number'].includes(key)}>
+            <IonChip key={idx} onClick={() => onClick(key)}>
                 <IonLabel color="secondary">{key.toUpperCase()}: {value}</IonLabel>
                 {!['site', 'treatment', 'number'].includes(key) ? <IonIcon icon={closeCircle}/> : null}
             </IonChip>
