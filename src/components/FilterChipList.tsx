@@ -1,5 +1,5 @@
 import React from "react"
-import { IonChip, IonLabel, useIonActionSheet, useIonAlert } from "@ionic/react"
+import { IonActionSheet, IonChip, IonLabel, useIonActionSheet, useIonAlert } from "@ionic/react"
 import { Filter, useDatasetFilter, SITE, TREATMENT, INDIVIDUAL, PLACE } from "../features/filter"
 
 const filterValues = {
@@ -24,12 +24,12 @@ const FilterChipList: React.FC = () => {
                 header: `Select ${filterKey}`,
                 buttons: [
                     ...filterValues[filterKey].map(o => {
-                        return {text: o, data: o, role: 'accept'}
+                        return {text: o, data: o, role: o === filter[filterKey] ? 'selected' : 'option'}
                     }),
                 ],
                 onDidDismiss: e => {
                     // if the action sheet was not dismissed, set the new filter
-                    if (e.detail.role !== 'cancel') {
+                    if (e.detail.role !== 'cancel' && e.detail.data) {
                         addFilter({[filterKey]: e.detail.data })
                     }
                 }
@@ -45,7 +45,7 @@ const FilterChipList: React.FC = () => {
                     max: 280
                 }],
                 onDidDismiss: e => {
-                    if (e.detail.role !== 'cancel') {
+                    if (e.detail.role !== 'cancel' && e.detail.data) {
                         addFilter({number: e.detail.data.values[0]})
                     }
                 }
