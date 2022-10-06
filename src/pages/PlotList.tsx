@@ -1,4 +1,4 @@
-import { getPlatforms, IonButton, IonButtons, IonCol, IonContent, IonGrid, IonHeader, IonItem, IonLabel, IonList, IonMenuButton, IonMenuToggle, IonPage, IonRow, IonText, IonTitle, IonToolbar } from "@ionic/react";
+import { getPlatforms, IonButton, IonButtons, IonCol, IonContent, IonGrid, IonHeader, IonItem, IonLabel, IonList, IonMenuButton, IonPage, IonRow, IonTitle, IonToolbar } from "@ionic/react";
 import FilterChipList from "../components/FilterChipList";
 import FilterButton from "../components/FilterButton";
 import LoginButton from "../components/LoginButton";
@@ -31,10 +31,8 @@ const PlotList: React.FC = () => {
                         <IonButtons slot="start">
                             <IonMenuButton />
                         </IonButtons>
-                        <IonTitle>Stammdaten</IonTitle>
+                        <IonTitle>Base data</IonTitle>
                         <IonButtons slot="end">
-                            {platforms.includes('desktop') ? <FilterChipList /> : null }
-                            <FilterButton fill="clear" />
                             <LoginButton slot="end" fill="clear" />
                         </IonButtons>
                     </IonToolbar>
@@ -47,13 +45,16 @@ const PlotList: React.FC = () => {
                                 </IonTitle>
                             </IonToolbar>
                         </IonHeader>
-
-                        { plots.length > 0 ? (
-                            <IonList>
-                                { !platforms.includes('desktop')|| true ? <IonItem><FilterChipList /></IonItem> : null }
-                                { plots.map((plot, idx) => <PlotListItem key={idx} plot={plot} />) }
-                            </IonList>
-                        ) : (
+                        
+                        <IonList>
+                            <IonItem lines="none">
+                                <FilterButton slot="start" fill="clear" />
+                                <FilterChipList />
+                            </IonItem>
+                            { plots.length > 0 ? plots.map((plot, idx) => <PlotListItem key={idx} plot={plot} />) : null }
+                        </IonList>
+                        
+                        {plots.length === 0 ? (
                             <IonGrid style={{height: '100%'}}>
                                 <IonCol size="12">
                                     <IonRow className="ion-justify-content-center">
@@ -73,7 +74,7 @@ const PlotList: React.FC = () => {
                                 </IonCol>
                             </IonGrid>
                             
-                        ) }
+                        ) : null }
                         
 
                     </IonContent>
