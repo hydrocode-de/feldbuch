@@ -45,16 +45,16 @@ const PlotList: React.FC = () => {
                                 </IonTitle>
                             </IonToolbar>
                         </IonHeader>
-
-                        { plots.length > 0 ? (
-                            <IonList>
-                                <IonItem lines="none">
-                                    <FilterButton slot="start" fill="clear" />
-                                    <FilterChipList />
-                                    </IonItem>
-                                { plots.map((plot, idx) => <PlotListItem key={idx} plot={plot} />) }
-                            </IonList>
-                        ) : (
+                        
+                        <IonList>
+                            <IonItem lines="none">
+                                <FilterButton slot="start" fill="clear" />
+                                <FilterChipList />
+                            </IonItem>
+                            { plots.length > 0 ? plots.map((plot, idx) => <PlotListItem key={idx} plot={plot} />) : null }
+                        </IonList>
+                        
+                        {plots.length === 0 ? (
                             <IonGrid style={{height: '100%'}}>
                                 <IonCol size="12">
                                     <IonRow className="ion-justify-content-center">
@@ -74,7 +74,7 @@ const PlotList: React.FC = () => {
                                 </IonCol>
                             </IonGrid>
                             
-                        ) }
+                        ) : null }
                         
 
                     </IonContent>
