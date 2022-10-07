@@ -1,23 +1,55 @@
-import { IonButton, IonButtons, IonContent, IonHeader, IonItem, IonList, IonMenuButton, IonPage, IonTitle, IonToolbar, useIonToast } from "@ionic/react"
-import { useState } from "react"
+import { IonButton, IonButtons, IonContent, IonHeader, IonItem, IonLabel, IonList, IonMenuButton, IonNote, IonPage, IonText, IonTitle, IonToolbar, useIonToast } from "@ionic/react"
+import { useEffect, useState } from "react"
 import MainMenu from "../components/MainMenu"
+import UpdateListItem from "../components/UpdateListItem"
 import { useFeldbuch } from "../supabase/feldbuch"
-import { Dataset } from "../supabase/feldbuch.model"
+import { Dataset, Plot } from "../supabase/feldbuch.model"
+
+export interface BaseData {
+    update: Dataset
+    dataset?: Dataset
+    plot?: Plot
+}
 
 const UpdatesList: React.FC = () => {
     // component state
     const [updates, setUpdates] = useState<Dataset[]>([])
+    const [baseData, setBaseData] = useState<BaseData[]>([])
+    const [isDeleted, setIsDeleted] = useState<number[]>([])
+    const [isSelected, setIsSelected] = useState<number[]>([])
 
     // get the importer function from feldbuch context
-    const { importAllUploads } = useFeldbuch()
+    const { importAllUploads, datasets, plots, deleteUpdates } = useFeldbuch()
     
     // get a toast handler
     const [ present ] = useIonToast();
     
+    // update base data, whenever new data arrives
+    useEffect(() => {
+        const newBaseData = updates.map(update => {
+            return {
+                update,
+                plot: plots!.find(p => p.id === update.plot_id),
+                dataset: datasets!.find(d => d.plot_id === update.plot_id && 
+                    //d.measurement_time! === update.measurement_time!.getFullYear() &&
+                    d.group_id === update.group_id
+                    )
+            }
+        })
+        setBaseData(newBaseData)
+    }, [updates, plots, datasets])
+
     // load handler
     const onLoadUpdates = () => {
         importAllUploads!().then(datasets => {
+            // set the updates
             setUpdates(datasets)
+            
+            // clear selected and deleted items
+            setIsDeleted([])
+            setIsSelected([])
+
+            // present a message to the user
             present({
                 message: 'Alle Änderungen geladen',
                 duration: 1000,
@@ -34,6 +66,43 @@ const UpdatesList: React.FC = () => {
         })
     }
 
+    const onSelectAll = () => {
+        const selected: number[] = []
+        baseData.forEach((_, idx) => {
+            if (!isDeleted.includes(idx)) {
+                selected.push(idx)
+            }
+        })
+        setIsSelected(selected)
+    }
+
+    const onDelete = () => {
+        const deleteIds = isDeleted.map(idx => baseData[idx].update.id!)
+        deleteUpdates!(deleteIds).then(() => {
+            present({
+                message: `Deleted update sugegstions of ID: ${deleteIds}`,
+                duration: 1500,
+                color: 'danger',
+                position: 'top'
+            })
+
+            // refresh the List
+            onLoadUpdates()
+        }).catch(error => {
+            present({
+                message: error,
+                duration: 1500,
+                color: 'warning',
+                position: 'top'
+            })
+        })
+    }
+
+    // subscribe to changes
+    useEffect(() => {
+        onLoadUpdates()
+    }, [])
+
     return (
         <>
         <MainMenu contentId="update-content"/>
@@ -43,7 +112,13 @@ const UpdatesList: React.FC = () => {
                     <IonButtons slot="start">
                         <IonMenuButton />
                     </IonButtons>
-                    <IonTitle>Änderungen</IonTitle>
+                    <IonTitle>Update suggestions</IonTitle>
+                    <IonButtons slot="end">
+                        <IonButton color="primary" onClick={onSelectAll}>SELECT ALL</IonButton>
+                        <IonButton color="success" disabled={isSelected.length===0 && false}>ACCEPT SELECTED</IonButton>
+                        <IonButton color="danger" fill="solid" disabled={isDeleted.length===0} onClick={onDelete}>DELETE</IonButton>
+                        
+                    </IonButtons>
                 </IonToolbar>
             </IonHeader>
             <IonContent fullscreen>
@@ -58,13 +133,16 @@ const UpdatesList: React.FC = () => {
                 
                 { updates.length > 0 ? (
                     <IonList>
-                    {updates.map((u, idx) => <IonItem key={idx}>Plot: { u.plot_id} - Gruppe: {u.group_id} </IonItem>)}
+                    {baseData.map((b, idx) => <UpdateListItem 
+                        key={idx}
+                        baseData={b}
+                        deleted={isDeleted.includes(idx)}
+                        selected={isSelected.includes(idx)} 
+                        onDelete={() => setIsDeleted([...isDeleted, idx])}
+                        onSelect={() => setIsSelected([...isSelected, idx])}
+                    />)}
                     </IonList>
-                ) : (
-                    <IonItem lines="none" style={{height: '100%', display: 'flex', justifyContent: 'center'}}>
-                        <IonButton size="large" style={{margin: 'auto'}} color="dark" onClick={onLoadUpdates}>AUS DATENBANK LADEN LADEN</IonButton>
-                    </IonItem>
-                ) }
+                ) : <IonNote className="ion-text-center">No update suggestions found</IonNote> }
 
             </IonContent>
         </IonPage>
