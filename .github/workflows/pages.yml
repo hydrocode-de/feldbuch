@@ -43,14 +43,14 @@ jobs:
       
       - name: Install ionic
         run: npm i --save -g @ionic/cli
-
-      - name: Replace env file
-        run: echo "REACT_APP_REDIRECT_URL=https://feldbuch.hydrocode.de\nREACT_APP_GOOGLE_MAPS_API_KEY=${{ secrets.GOOGLE_MAPS_KEY }}" > .env
         
       - name: Build package
         run: ionic build --prod --pulic-url=feldbuch.hydrocode.de --engine=browser --ci=false
         env:
           CI: false
+          REACT_APP_REDIRECT_URL: https://feldbuch.hydrocode.de
+          REACT_APP_GOOGLE_MAPS_API_KEY: ${{ secrets.GOOGLE_MAPS_KEY }}
+
         
       - name: Copy 404 page 
         run: cp ./build/index.html ./build/404.html
