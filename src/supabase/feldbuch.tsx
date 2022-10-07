@@ -22,6 +22,7 @@ interface FeldbuchState {
     addDataset?: (data: Dataset) => Promise<void>
     importAllUploads?: () => Promise<Dataset[]>
     clearLocalData?: () => Promise<void>
+    deleteUpdates?: (ids: number[]) => Promise<void>
 }
 
 const initialState: FeldbuchState = {
@@ -268,6 +269,15 @@ export const FeldbuchProvider: React.FC<React.PropsWithChildren> = ({ children }
         })
     }
 
+    const deleteUpdates = (ids: number[]): Promise<void> => {
+        return new Promise((resolve, reject) => {
+            supabase.from('updates').delete().in('id', ids).then(({ error }) => {
+                if (error) reject(error.message)
+                resolve()
+            })
+        })
+    }
+
     // clear the local data
     const clearLocalData = (): Promise<void> => {
         return localforage.clear().then(() => {
@@ -290,6 +300,7 @@ export const FeldbuchProvider: React.FC<React.PropsWithChildren> = ({ children }
         upload,
         addDataset,
         importAllUploads,
+        deleteUpdates,
         clearLocalData
     }
 
