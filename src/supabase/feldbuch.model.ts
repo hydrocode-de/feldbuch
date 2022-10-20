@@ -17,7 +17,7 @@ export interface Dataset {
     plot_id: number,
     group_id: number,
     user_id?: string,
-    data: {[key: string]: Date | number | string},
+    data: {[key: string]: Date | number | string | Boolean},
     measurement_time?: Date,
     created_at?: Date
 }
