@@ -1,15 +1,11 @@
-import { IonButton, IonButtons, IonContent, IonHeader, IonItem, IonLabel, IonList, IonMenuButton, IonNote, IonPage, IonText, IonTitle, IonToolbar, useIonToast } from "@ionic/react"
+import { IonButton, IonButtons, IonContent, IonHeader, IonList, IonMenuButton, IonNote, IonPage, IonTitle, IonToolbar, useIonToast } from "@ionic/react"
 import { useEffect, useState } from "react"
 import MainMenu from "../components/MainMenu"
 import UpdateListItem from "../components/UpdateListItem"
 import { useFeldbuch } from "../supabase/feldbuch"
-import { Dataset, Plot } from "../supabase/feldbuch.model"
+import { Dataset, BaseData } from "../supabase/feldbuch.model"
 
-export interface BaseData {
-    update: Dataset
-    dataset?: Dataset
-    plot?: Plot
-}
+
 
 const UpdatesList: React.FC = () => {
     // component state
@@ -19,7 +15,7 @@ const UpdatesList: React.FC = () => {
     const [isSelected, setIsSelected] = useState<number[]>([])
 
     // get the importer function from feldbuch context
-    const { importAllUploads, datasets, plots, deleteUpdates } = useFeldbuch()
+    const { importAllUploads, datasets, plots, deleteUpdates, acceptUploads } = useFeldbuch()
     
     // get a toast handler
     const [ present ] = useIonToast();
@@ -45,6 +41,7 @@ const UpdatesList: React.FC = () => {
             // set the updates
             setUpdates(datasets)
             
+
             // clear selected and deleted items
             setIsDeleted([])
             setIsSelected([])
@@ -98,6 +95,25 @@ const UpdatesList: React.FC = () => {
         })
     }
 
+    const onAcceptUploads = () => {
+        acceptUploads!(updates).then(message => {
+            present({
+                message: message,
+                duration: 2000,
+                color: 'success',
+                position: 'top'
+            })
+            onLoadUpdates()
+        }).catch(error => {
+            present({
+                message: error,
+                duration: 1500,
+                color: 'danger',
+                position: 'top'
+            })
+        })
+    }
+
     // subscribe to changes
     useEffect(() => {
         onLoadUpdates()
@@ -115,7 +131,7 @@ const UpdatesList: React.FC = () => {
                     <IonTitle>Update suggestions</IonTitle>
                     <IonButtons slot="end">
                         <IonButton color="primary" onClick={onSelectAll}>SELECT ALL</IonButton>
-                        <IonButton color="success" disabled={isSelected.length===0 && false}>ACCEPT SELECTED</IonButton>
+                        <IonButton color="success" disabled={isSelected.length===0} onClick={onAcceptUploads}>ACCEPT SELECTED</IonButton>
                         <IonButton color="danger" fill="solid" disabled={isDeleted.length===0} onClick={onDelete}>DELETE</IonButton>
                         
                     </IonButtons>

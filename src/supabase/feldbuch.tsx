@@ -2,7 +2,7 @@ import React, { createContext, useContext, useEffect, useState } from "react"
 import localforage from 'localforage';
 import cloneDeep from 'lodash.clonedeep';
 
-import { Plot, Dataset, DataGroup } from "./feldbuch.model";
+import { Plot, Dataset, DataGroup, BaseData } from "./feldbuch.model";
 import { supabase } from './supabase';
 import { useAuth } from "./auth";
 
@@ -21,6 +21,7 @@ interface FeldbuchState {
     upload?: () => Promise<void>,
     addDataset?: (data: Dataset) => Promise<void>
     importAllUploads?: () => Promise<Dataset[]>
+    acceptUploads?: (data: Dataset[]) => Promise<string>
     clearLocalData?: () => Promise<void>
     deleteUpdates?: (ids: number[]) => Promise<void>
 }
@@ -140,7 +141,12 @@ export const FeldbuchProvider: React.FC<React.PropsWithChildren> = ({ children }
                 if (error) reject(error.message)
                 if (data) {
                     const datasets: Dataset[] = data.map(({data, ...opts}) => {
-                        return {...opts, data: JSON.parse(data)}
+                        if (typeof data === 'string') {
+                            return {...opts, data: JSON.parse(data)}
+                        } else {
+                            return {...opts, data}
+                        }
+                        
                     })
                     return datasets
                 } else {
@@ -195,6 +201,36 @@ export const FeldbuchProvider: React.FC<React.PropsWithChildren> = ({ children }
                 }
             })
 
+        })
+    }
+
+    // persist accepted uploads as new datasets
+    const acceptUploads = async (updateData: Dataset[]): Promise<string> => {
+        return new Promise((resolve, reject) => {
+            if (!user) reject('No user logged in.')
+
+            const len = updateData.length
+            const data = updateData.map(d => {
+                const {id, ...args} = d
+                return {...args}
+            })
+            // send to supabase
+            supabase.from('datasets').insert(data).then(({error}) => {
+                if (error) {
+                    reject(error.message)
+                } 
+                return
+            })
+            .then(() => {
+                supabase.from('updates').delete().in('id', updateData.map(u => u.id)).then(({error}) => {
+                    if (error) reject(error.message)
+                })
+                .then(() => {
+                    localforage.removeItem('updates').then(() => {
+                        resolve(`${len} data updates were accepted`)
+                    })
+                })
+            })
         })
     }
 
@@ -300,6 +336,7 @@ export const FeldbuchProvider: React.FC<React.PropsWithChildren> = ({ children }
         upload,
         addDataset,
         importAllUploads,
+        acceptUploads,
         deleteUpdates,
         clearLocalData
     }

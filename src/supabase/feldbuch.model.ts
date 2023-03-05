@@ -18,8 +18,14 @@ export interface Dataset {
     group_id: number,
     user_id?: string,
     data: {[key: string]: Date | number | string | Boolean},
-    measurement_time?: Date,
-    created_at?: Date
+    measurement_time?: Date | string,
+    created_at?: Date | string
+}
+
+export interface BaseData {
+    update: Dataset
+    dataset?: Dataset
+    plot?: Plot
 }
 
 export interface DataGroup {
