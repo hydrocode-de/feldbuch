@@ -2,7 +2,7 @@ import { IonAccordion, IonAccordionGroup, IonCheckbox, IonContent, IonIcon, IonI
 import { addCircleOutline, pencilOutline } from 'ionicons/icons'
 import { useRef } from "react"
 
-import { BaseData } from "../pages/UpdatesList"
+import { BaseData } from "../supabase/feldbuch.model"
 import { useFeldbuch } from "../supabase/feldbuch"
 
 interface UpdateListItemProps {
@@ -24,7 +24,12 @@ const UpdateListItem: React.FC<UpdateListItemProps> = ({ baseData, deleted, sele
                 <IonIcon size="large" slot="start" icon={baseData.dataset ? pencilOutline : addCircleOutline} color={baseData.dataset ? 'warning' : 'success'} />
                 <IonLabel className="ion-text-wrap">
                     <p>{baseData.plot!.site}&nbsp;&nbsp;{baseData.plot!.treatment}</p>
-                    <h2>Number: {baseData.plot!.number}&nbsp;&nbsp;-&nbsp;&nbsp;Individual: {baseData.plot!.individual}</h2>
+                    <h2 style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}}>
+                        <span>Number: {baseData.plot!.number}&nbsp;&nbsp;-&nbsp;&nbsp;Individual: {baseData.plot!.individual}</span>
+                        <span>{ baseData.update.user_id }</span>
+                    </h2>
+                    
+                    
                     <IonAccordionGroup>
                         <IonAccordion>
                             <IonItem slot="header" color={selected ? 'success' : 'default'}>
@@ -65,7 +70,7 @@ const UpdateListItem: React.FC<UpdateListItemProps> = ({ baseData, deleted, sele
             </IonItem>
 
             <IonItemOptions>
-                <IonItemOption color="secondary" onClick={() => {onSelect!();ref.current?.close()}}>SELECT</IonItemOption>
+                <IonItemOption color="light" onClick={() => {onSelect!();ref.current?.close()}}>SELECT</IonItemOption>
                 <IonItemOption color="danger" onClick={() => {onDelete!();ref.current?.close()}}>DELETE</IonItemOption>
             </IonItemOptions>
 
