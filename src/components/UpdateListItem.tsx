@@ -28,7 +28,7 @@ const UpdateListItem: React.FC<UpdateListItemProps> = ({ baseData, deleted, sele
                     <IonAccordionGroup>
                         <IonAccordion>
                             <IonItem slot="header" color={selected ? 'success' : 'default'}>
-                                <IonLabel>{dataGroups[baseData.update.group_id].long_name}</IonLabel>
+                                <IonLabel>{ (dataGroups.find(g => g.id === baseData.update.group_id) || {long_name: 'Unkown'}).long_name }</IonLabel>
                             </IonItem>
                             <IonList slot="content">
                                 { Object.entries(baseData.update.data).map(([key, value], idx) => {
