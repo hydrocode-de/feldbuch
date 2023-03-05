@@ -45,6 +45,8 @@ const UpdatesList: React.FC = () => {
             // set the updates
             setUpdates(datasets)
             
+            console.log(updates)
+
             // clear selected and deleted items
             setIsDeleted([])
             setIsSelected([])
