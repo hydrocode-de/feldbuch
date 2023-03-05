@@ -22,6 +22,12 @@ export interface Dataset {
     created_at?: Date
 }
 
+export interface BaseData {
+    update: Dataset
+    dataset?: Dataset
+    plot?: Plot
+}
+
 export interface DataGroup {
     id: number;
     short_name: string;
