@@ -8,7 +8,9 @@ const DataInputG1: React.FC<DataInputProps> = ({ onSave }) => {
     const [len, setLen] = useState<number>()
     const [diameter, setDiameter] = useState<number>()
     const [mortality, setMortality] = useState<string>()
+    const [browse, setBrowse] = useState<boolean>(false)
     const [cause, setCause] = useState<string>()
+    const [lost, setLost] = useState<boolean>(false)
     const [notes, setNotes] = useState<string>()
 
     // save handler
@@ -18,7 +20,9 @@ const DataInputG1: React.FC<DataInputProps> = ({ onSave }) => {
             ...(len && { length: len }), 
             ...(diameter && { diameter }), 
             ...(mortality && { mortality }), 
+            ...(browse && { browse }),
             ...(cause && { cause }), 
+            ...(lost && { lost }),
             ...(notes && { notes })}
         onSave(data)
     }
