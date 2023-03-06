@@ -4,6 +4,7 @@ import { useRef } from "react"
 
 import { BaseData } from "../supabase/feldbuch.model"
 import { useFeldbuch } from "../supabase/feldbuch"
+import { useAuth } from "../supabase/auth"
 
 interface UpdateListItemProps {
     baseData: BaseData
@@ -14,9 +15,13 @@ interface UpdateListItemProps {
 }
 
 const UpdateListItem: React.FC<UpdateListItemProps> = ({ baseData, deleted, selected, onDelete, onSelect }) => {
+    // load dataGroups
     const { dataGroups } = useFeldbuch()
     const ref = useRef<HTMLIonItemSlidingElement>(null)
     
+    // load extra information about e-mail adresses
+    const {userInfos} = useAuth()
+
     return (
         <IonItemSliding ref={ref}>
 
@@ -25,11 +30,11 @@ const UpdateListItem: React.FC<UpdateListItemProps> = ({ baseData, deleted, sele
                 <IonLabel className="ion-text-wrap">
                     <p style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}}>
                         <span>{baseData.plot!.site}&nbsp;&nbsp;{baseData.plot!.treatment}</span>
-                        <IonBadge color="dark">{ baseData.update.measurement_time ? new Date(baseData.update.measurement_time).toLocaleString() : 'NaN' }</IonBadge>
+                        <IonBadge color="dark">{ (userInfos.find(u => u.user_id === baseData.update.user_id) || {email: 'NaN'}).email }</IonBadge>
                     </p>
                     <h2 style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}}>
                         <span>Number: {baseData.plot!.number}&nbsp;&nbsp;-&nbsp;&nbsp;Individual: {baseData.plot!.individual}</span>
-                        <span>{ baseData.update.user_id }</span>
+                        <span>{ baseData.update.measurement_time ? new Date(baseData.update.measurement_time).toLocaleString() : 'NaN' }</span>
                     </h2>
                     
                     
