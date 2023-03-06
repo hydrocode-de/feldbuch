@@ -1,4 +1,4 @@
-import { IonButton, IonInput, IonItem, IonLabel, IonList, IonSelect, IonSelectOption, IonTextarea } from '@ionic/react'
+import { IonButton, IonInput, IonItem, IonLabel, IonList, IonNote, IonSelect, IonSelectOption, IonTextarea, IonToggle } from '@ionic/react'
 import { useState } from 'react'
 import { DataInputProps } from './DataInput.model'
 
@@ -8,7 +8,9 @@ const DataInputG1: React.FC<DataInputProps> = ({ onSave }) => {
     const [len, setLen] = useState<number>()
     const [diameter, setDiameter] = useState<number>()
     const [mortality, setMortality] = useState<string>()
+    const [browse, setBrowse] = useState<boolean>(false)
     const [cause, setCause] = useState<string>()
+    const [lost, setLost] = useState<boolean>(false)
     const [notes, setNotes] = useState<string>()
 
     // save handler
@@ -18,7 +20,9 @@ const DataInputG1: React.FC<DataInputProps> = ({ onSave }) => {
             ...(len && { length: len }), 
             ...(diameter && { diameter }), 
             ...(mortality && { mortality }), 
+            ...(browse && { browse }),
             ...(cause && { cause }), 
+            ...(lost && { lost }),
             ...(notes && { notes })}
         onSave(data)
     }
@@ -44,16 +48,25 @@ const DataInputG1: React.FC<DataInputProps> = ({ onSave }) => {
                     <IonSelectOption value="ms dead">ms dead</IonSelectOption>
                 </IonSelect>
             </IonItem>
+            <IonItem onClick={() => setBrowse(!browse)} style={{cursor: 'pointer'}}>
+                <IonLabel>Plant has been browsed</IonLabel>
+                <IonToggle mode="ios" color="warning" slot="end" checked={browse} onIonChange={e => setBrowse(e.target.checked)} />
+            </IonItem>
             <IonItem>
                 <IonLabel position="floating">Cause</IonLabel>
                 <IonInput type="text" value={cause} onIonChange={e => setCause(String(e.target.value))} />
+            </IonItem>
+            <IonItem onClick={() => setLost(!lost)}>
+                <IonLabel>This plant is lost</IonLabel>
+                <IonToggle mode="ios" color="danger" slot="end" checked={lost} onIonChange={e => setLost(e.target.checked)} />
+                <IonNote slot="helper">This toggle indicates, that the entire plant is not there anymore, and recording is not possible. A browsing damage can be indicated above.</IonNote>
             </IonItem>
         </IonList>
         <IonTextarea placeholder="Place custom notes" value={notes} onIonChange={e => setNotes(String(e.target.value))} rows={8} />
         <IonButton 
             expand="block"
             color="success"
-            disabled={!height || !len || !diameter }
+            disabled={(!height || !len || !diameter) && !lost}
             onClick={saveHandler}
         >SAVE</IonButton>
     </>)

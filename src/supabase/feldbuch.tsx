@@ -120,22 +120,6 @@ export const FeldbuchProvider: React.FC<React.PropsWithChildren> = ({ children }
                 return localforage.setItem('groups', data)
             })
 
-            /* // wait for the plotQuery, then load the data
-            const dataQueries: PromiseLike<Dataset[]>[] = [];
-            ['g1', 'g2', 'g3', 'g4'].forEach(name => {
-                dataQueries.push(supabase.from(name).select().then(({error, data}) => {
-                    if (error) reject(error)
-                    if (data) {
-                        const dataList: Dataset[] = data.map(d => {
-                            return {group: name, ...d}
-                        })
-                        return dataList
-                    } else {
-                        return []
-                    }
-                }))
-            }) */
-
             // get the accepted data
             const dataQuery = supabase.from('datasets').select().then(({error, data}) => {
                 if (error) reject(error.message)
@@ -153,17 +137,7 @@ export const FeldbuchProvider: React.FC<React.PropsWithChildren> = ({ children }
                     return []
                 }
             }).then(datasets => localforage.setItem('datasets', datasets))
-            
-            // get the updates candidates
-            // this one is causing problems because it is synced twice
-            // const updatesQuery = supabase.from('updates').select().then(({error, data}) => {
-            //     if (error) reject(error.message)
-            //     if (data) {
-            //         return data as Dataset[]
-            //     } else {
-            //         return []
-            //     }
-            // }).then(updates => localforage.setItem('updates', updates))
+
 
             // update the checksums after all other are finished
             return Promise.all([plotQuery, groupsQuery]).then(() => {
