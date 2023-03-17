@@ -66,7 +66,7 @@ const DataInputG1: React.FC<DataInputProps> = ({ onSave }) => {
         <IonButton 
             expand="block"
             color="success"
-            disabled={(!height || !len || !diameter) && !lost}
+            disabled={(!height || !len || !diameter) && !lost && !(mortality==='dead' && len)}
             onClick={saveHandler}
         >SAVE</IonButton>
     </>)
