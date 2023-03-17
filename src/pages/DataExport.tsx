@@ -41,7 +41,7 @@ const DataExport: React.FC = () => {
     // get all available years
     useEffect(() => {
         // update
-        const yrs = datasets.map(d => new Date(d.created_at!).getFullYear()).filter((y, i, arr) => arr.indexOf(y) === i)
+        const yrs = datasets.map(d => new Date(d.measurement_time!).getFullYear()).filter((y, i, arr) => arr.indexOf(y) === i)
         setAvailableYears([...yrs])
         setYears([...yrs])
     }, [datasets])
@@ -55,7 +55,7 @@ const DataExport: React.FC = () => {
             const record = cloneDeep(plot) as Record
             record.datasets = datasets.filter(d => d.plot_id === plot.id)
                 // add year and filter by year
-                .map(d => {return {...d, year: new Date(d.created_at as string).getFullYear()}})
+                .map(d => {return {...d, year: new Date(d.measurement_time as string).getFullYear()}})
                 .filter(d => years.includes(d.year))
             
             if (!withData || (withData && record.datasets.length > 0)) {
