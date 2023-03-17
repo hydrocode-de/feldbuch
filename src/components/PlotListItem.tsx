@@ -1,4 +1,4 @@
-import { IonItem, IonLabel } from "@ionic/react"
+import { IonBadge, IonItem, IonLabel } from "@ionic/react"
 import { Plot } from "../supabase/feldbuch.model"
 
 interface PlotListItemProps {
@@ -9,8 +9,8 @@ const PlotListItem: React.FC<PlotListItemProps> = ({ plot }) => {
     return (
         <IonItem routerLink={`/list/${plot.id}`} detail>
             <IonLabel className="ion-text-wrap">
-                <h2>{plot.site} - {plot.treatment} - {plot.number} - {plot.individual}</h2>
-                <p>{plot.species}</p>
+                <h1>Individual {plot.individual}</h1>
+                <p>Number: {plot.number} - {plot.species}</p>
             </IonLabel>
         </IonItem>
     )
