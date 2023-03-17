@@ -9,6 +9,8 @@ import AddUpdates from './pages/AddUpdates';
 import UpdatesList from './pages/UpdatesList';
 import Settings from './pages/Settings';
 import DataExport from './pages/DataExport';
+import Analysis from './pages/Analysis';
+
 
 const Navigation: React.FC = () => {
     return (
@@ -34,6 +36,9 @@ const Navigation: React.FC = () => {
             </Route>
             <Route path="/export">
               <DataExport />
+            </Route>
+            <Route path="/analysis" exact>
+              <Analysis />
             </Route>
             <Route path="/settings" exact>
               <Settings />
