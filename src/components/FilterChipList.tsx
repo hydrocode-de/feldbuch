@@ -46,7 +46,7 @@ const FilterChipList: React.FC = () => {
                 }],
                 onDidDismiss: e => {
                     if (e.detail.role !== 'cancel' && e.detail.data) {
-                        addFilter({number: e.detail.data.values[0]})
+                        addFilter({number: String(e.detail.data.values[0])})
                     }
                 }
             })
