@@ -5,6 +5,7 @@ import { useParams } from "react-router"
 import DataAccordion from "../components/DataAccordion";
 import LoginButton from "../components/LoginButton";
 import OverviewMap from "../components/OverviewMap";
+import SyncButton from "../components/SyncButton";
 import { useDatasetFilter } from "../features/filter";
 import { useAuth } from "../supabase/auth";
 
@@ -25,8 +26,6 @@ const ViewPlot: React.FC = () => {
     const { datasets, updates } = useFeldbuch();
     const { filteredPlots: plots } = useDatasetFilter();
 
-    // check if the user is logged in
-    const { user } = useAuth();
 
     // load the correct plot and its data
     useEffect(() => {
@@ -53,6 +52,7 @@ const ViewPlot: React.FC = () => {
                     </IonButtons>
                     <IonTitle>{ plot?.species } individual {plot?.individual }</IonTitle>
                     <IonButtons slot="end">
+                        <SyncButton fill="clear" />
                         <LoginButton fill="clear" />
                     </IonButtons>
                 </IonToolbar>
