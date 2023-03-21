@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { cloudDownloadOutline, cloudUploadOutline, refreshOutline, alertOutline } from 'ionicons/icons';
 
 import { useFeldbuch } from "../supabase/feldbuch";
+import { useSettings } from "../contexts/settings";
 
 // get the IonButton props without the onClick handler
 type IonButtonProps = Exclude<React.ComponentProps<typeof IonButton>, 'onClick'>
@@ -10,6 +11,7 @@ type IonButtonProps = Exclude<React.ComponentProps<typeof IonButton>, 'onClick'>
 const SyncButton: React.FC<IonButtonProps> = props => {
     // use the feldbuch context
     const { checkSyncState, synced, dirty, sync, upload } = useFeldbuch()
+    const { user_id } = useSettings()
     
     // some component state
     const [busy, setBusy] = useState<boolean>(false);
@@ -75,7 +77,7 @@ const SyncButton: React.FC<IonButtonProps> = props => {
     }
 
     // upload needed?
-    if (dirty) {
+    if (dirty && user_id) {
         return (
             <IonButton onClick={onUpload} {...props}>
                 <IonIcon slot="icon-only" icon={cloudUploadOutline} />
