@@ -9,6 +9,7 @@ import { defineCustomElements } from '@ionic/pwa-elements/loader'
 import { AuthProvider } from './supabase/auth';
 import { FeldbuchProvider } from './supabase/feldbuch';
 import { FilterProvider } from './features/filter';
+import { SettingsProvider } from './contexts/settings';
 
 defineCustomElements(window)
 
@@ -17,11 +18,13 @@ const root = createRoot(container!);
 root.render(
   <React.StrictMode>
     <AuthProvider>
-      <FeldbuchProvider>
-        <FilterProvider>
-          <App />
-        </FilterProvider>
-      </FeldbuchProvider>
+      <SettingsProvider>
+        <FeldbuchProvider>
+          <FilterProvider>
+            <App />
+          </FilterProvider>
+        </FeldbuchProvider>
+      </SettingsProvider>
     </AuthProvider>
   </React.StrictMode>
 );
