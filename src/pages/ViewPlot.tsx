@@ -1,10 +1,11 @@
-import { IonAccordion, IonAccordionGroup, IonBackButton, IonButtons, IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle, IonContent, IonFab, IonFabButton, IonHeader, IonIcon, IonItem, IonLabel, IonList, IonListHeader, IonPage, IonSegment, IonSegmentButton, IonTitle, IonToolbar } from "@ionic/react";
+import { IonAccordion, IonAccordionGroup, IonBackButton, IonButtons, IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle, IonContent, IonFab, IonFabButton, IonHeader, IonIcon, IonItem, IonLabel, IonList, IonListHeader, IonPage, IonTitle, IonToolbar } from "@ionic/react";
 import { add } from 'ionicons/icons'
 import { useEffect, useState } from "react";
 import { useParams } from "react-router"
 import DataAccordion from "../components/DataAccordion";
 import LoginButton from "../components/LoginButton";
 import OverviewMap from "../components/OverviewMap";
+import SyncButton from "../components/SyncButton";
 import { useDatasetFilter } from "../features/filter";
 import { useAuth } from "../supabase/auth";
 
@@ -17,7 +18,6 @@ const ViewPlot: React.FC = () => {
     const [plot, setPlot] = useState<Plot>();
     const [datasetList, setDatasetList] = useState<Dataset[]>([]);
     const [dataUpdateList, setDataUpdateList] = useState<Dataset[]>([]);
-    const [activeSegment, setActiveSegment] = useState<'img' | 'map' | 'details'>('img')
 
     // get url query params
     const params = useParams<{id: string}>();
@@ -26,13 +26,14 @@ const ViewPlot: React.FC = () => {
     const { datasets, updates } = useFeldbuch();
     const { filteredPlots: plots } = useDatasetFilter();
 
-    // check if the user is logged in
-    const { user } = useAuth();
 
     // load the correct plot and its data
     useEffect(() => {
+        // return if plots are not yet loaded
+        if (!(plots.length > 0)) return
+
         // find the relevant data
-        const plot = plots.find(p => p.id == Number(params.id))
+        const plot = plots.find(p => p.id === Number(params.id))
         const datasetList = datasets.filter(d => d.plot_id === plot!.id)
         const updatesList = updates.filter(d => d.plot_id === plot!.id)
 
@@ -40,7 +41,7 @@ const ViewPlot: React.FC = () => {
         setPlot(plot)
         setDatasetList(datasetList)
         setDataUpdateList(updatesList)
-    }, [plots])
+    }, [plots, datasets, updates])
 
     return (
         <IonPage>
@@ -51,6 +52,7 @@ const ViewPlot: React.FC = () => {
                     </IonButtons>
                     <IonTitle>{ plot?.species } individual {plot?.individual }</IonTitle>
                     <IonButtons slot="end">
+                        <SyncButton fill="clear" />
                         <LoginButton fill="clear" />
                     </IonButtons>
                 </IonToolbar>
@@ -63,20 +65,7 @@ const ViewPlot: React.FC = () => {
                 <IonCardHeader>
                         <IonCardSubtitle>{plot?.site}&nbsp;&nbsp;-&nbsp;&nbsp;{plot?.treatment}</IonCardSubtitle>
                         <IonCardTitle>Number: {plot?.number}&nbsp;&nbsp;-&nbsp;&nbsp;<strong>Individual {plot?.individual}</strong></IonCardTitle>
-                    </IonCardHeader>
-                    {/* <IonSegment value={activeSegment} scrollable onIonChange={e => setActiveSegment(e.target.value as 'img' | 'map' | 'details')}>
-                        <IonSegmentButton value="img">
-                            <IonLabel>Show image</IonLabel>
-                        </IonSegmentButton>
-                        <IonSegmentButton value="map">
-                            <IonLabel>Show map</IonLabel>
-                        </IonSegmentButton>
-                        <IonSegmentButton value="details">
-                            <IonLabel>Show details</IonLabel>
-                        </IonSegmentButton>
-                    </IonSegment>
-                    { activeSegment === 'img' ? <img src="https://via.placeholder.com/1920x400" alt="Image" /> : null } */}
-                    
+                    </IonCardHeader>                    
 
                     <IonCardContent>
                         <IonAccordionGroup>
@@ -122,7 +111,7 @@ const ViewPlot: React.FC = () => {
                 </IonCardContent></IonCard>
 
                 <IonFab vertical="bottom" horizontal="end" slot="fixed">
-                    <IonFabButton color="success" disabled={!user} routerLink={`/list/${plot?.id}/add`} routerDirection="forward">
+                    <IonFabButton color="success" routerLink={`/list/${plot?.id}/add`} routerDirection="forward">
                         <IonIcon icon={add} />
                     </IonFabButton>
                 </IonFab>

@@ -2,9 +2,10 @@ import React, { createContext, useContext, useEffect, useState } from "react"
 import localforage from 'localforage';
 import cloneDeep from 'lodash.clonedeep';
 
-import { Plot, Dataset, DataGroup, BaseData } from "./feldbuch.model";
+import { Plot, Dataset, DataGroup } from "./feldbuch.model";
 import { supabase } from './supabase';
 import { useAuth } from "./auth";
+import { useSettings } from "../contexts/settings";
 
 
 export type SYNC_STATE = 'behind' | 'head' | 'unknown';
@@ -51,6 +52,7 @@ export const FeldbuchProvider: React.FC<React.PropsWithChildren> = ({ children }
 
     // get the current user
     const { user } = useAuth();
+    const { user_id } = useSettings();
 
     // check if we are dirty
     useEffect(() => {
@@ -159,7 +161,7 @@ export const FeldbuchProvider: React.FC<React.PropsWithChildren> = ({ children }
     // upload updates to the database
     const upload = (): Promise<void> => {
         return new Promise((resolve, reject) => {
-            if (!user) reject('No user logged in.')
+            if (!user_id) reject('No user logged in.')
 
             // send to supabase
             supabase.from('updates').insert(dataUpdates).then(({ error }) => {
@@ -237,14 +239,14 @@ export const FeldbuchProvider: React.FC<React.PropsWithChildren> = ({ children }
 
     const addDataset = (data: Dataset): Promise<void> => {
         return new Promise((resolve, reject) => {
-            if (user) {
+            if (user_id) {
                 // check if the plot exists
                 if (plots.map(p => p.id).includes(data.plot_id)) {
                     // add this dataset to the stack
                     const newDatasets = cloneDeep(dataUpdates)
                     newDatasets.push({
                         ...data,
-                        user_id: user.id,
+                        user_id: user_id,
                         measurement_time: new Date()
                     })
 

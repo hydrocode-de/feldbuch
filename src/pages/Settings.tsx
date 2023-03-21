@@ -4,6 +4,8 @@ import SyncButton from "../components/SyncButton"
 import { useAuth } from "../supabase/auth"
 import { useFeldbuch } from "../supabase/feldbuch"
 
+import pack from '../../package.json'
+
 const Settings: React.FC = () => {
     // load the local data 
     const { plots, datasets, updates, dataGroups, clearLocalData } = useFeldbuch()
@@ -35,6 +37,13 @@ const Settings: React.FC = () => {
                     </IonTitle>
                 </IonToolbar>
             </IonHeader>
+
+            <IonList>
+                <IonItem>
+                    <IonLabel slot="start">Application version</IonLabel>
+                    <IonLabel slot="end"><code>{ pack.version }</code></IonLabel>
+                </IonItem>
+            </IonList>
 
             <IonAccordionGroup>
 
