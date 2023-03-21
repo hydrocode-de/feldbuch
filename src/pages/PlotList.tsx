@@ -33,6 +33,7 @@ const PlotList: React.FC = () => {
                         </IonButtons>
                         <IonTitle>Base data</IonTitle>
                         <IonButtons slot="end">
+                            <SyncButton slot="end" fill="clear" />
                             <LoginButton slot="end" fill="clear" />
                         </IonButtons>
                     </IonToolbar>
