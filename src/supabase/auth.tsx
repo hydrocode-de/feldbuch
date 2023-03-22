@@ -2,7 +2,7 @@ import { User, UserCredentials } from '@supabase/supabase-js';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { supabase } from './supabase';
 
-const ADMIN_EMAILS = ['mareike.mohr@waldbau.uni-freiburg.de', 'mirko@hydrocode.de']
+const ADMIN_EMAILS = ['mareike.mohr@waldbau.uni-freiburg.de', 'mirko@hydrocode.de', 'diemai@posteo.de']
 const { REACT_APP_REDIRECT_URL } = process.env;
 
 interface AuthState {
