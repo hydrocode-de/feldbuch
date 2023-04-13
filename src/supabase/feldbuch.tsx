@@ -21,6 +21,7 @@ interface FeldbuchState {
     sync?: () => Promise<boolean>,
     upload?: () => Promise<void>,
     addDataset?: (data: Dataset) => Promise<void>
+    updateDataset?: (data: Dataset, index: number) => Promise<void>
     importAllUploads?: () => Promise<Dataset[]>
     acceptUploads?: (data: Dataset[]) => Promise<string>
     clearLocalData?: () => Promise<void>
@@ -264,6 +265,26 @@ export const FeldbuchProvider: React.FC<React.PropsWithChildren> = ({ children }
         })
     }
 
+    const updateDataset = (data: Dataset, index: number): Promise<void> => {
+        // clone all dataUpdates except the one to be updated
+        const newDatasets = cloneDeep(dataUpdates)
+
+        // update the dataset with user_id and measurement_time
+        const updatedData = {
+            ...data,
+            user_id: user_id,
+            measurement_time: new Date()
+        }
+
+        // push the new dataset at the given index
+        newDatasets.splice(index, 1, updatedData)
+
+        // set the data
+        return localforage.setItem('updates', newDatasets).then(() => {
+            setDataUpdates(newDatasets)
+        })
+    }
+
     // some helper function to work with all updates
     const importAllUploads = (): Promise<Dataset[]> => {
         return new Promise((resolve, reject) => {
@@ -311,6 +332,7 @@ export const FeldbuchProvider: React.FC<React.PropsWithChildren> = ({ children }
         sync,
         upload,
         addDataset,
+        updateDataset,
         importAllUploads,
         acceptUploads,
         deleteUpdates,
