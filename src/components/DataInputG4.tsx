@@ -4,11 +4,11 @@ import { DataInputProps } from './DataInput.model'
 
 const DataInputG4: React.FC<DataInputProps> = ({ onSave, values }) => {
     // component state
-    const [pressure, setPressure] = useState<number>()
-    const [t_collected, setTCollected] = useState<Date>()
-    const [t_measured, setTMeasued] = useState<Date>()
-    const [len, setLen] = useState<number>()
-    const [notes, setNotes] = useState<string>()
+    const [pressure, setPressure] = useState<number | undefined>(values?.pressure ? Number(values.pressure) : undefined)
+    const [t_collected, setTCollected] = useState<Date | undefined>(values?.t_collected ? values.t_collected as Date : undefined)
+    const [t_measured, setTMeasued] = useState<Date | undefined>(values?.t_measured ? values.t_measured as Date : undefined)
+    const [len, setLen] = useState<number | undefined>(values?.length ? Number(values.length) : undefined)
+    const [notes, setNotes] = useState<string | undefined>(values?.notes ? String(values.notes) : undefined)
 
     // save handler
     const saveHandler = () => {

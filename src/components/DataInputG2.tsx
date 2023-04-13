@@ -4,12 +4,12 @@ import { DataInputProps } from './DataInput.model'
 
 const DataInputG2: React.FC<DataInputProps> = ({ onSave, values }) => {
     // component state
-    const [sol_no, setSolNo] = useState<number>()
-    const [dsf, setDsf] = useState<number>()
-    const [isf, setIsf] = useState<number>()
-    const [tsf, setTsf] = useState<number>()
-    const [openess, setOpeness] = useState<string>()
-    const [notes, setNotes] = useState<string>()
+    const [sol_no, setSolNo] = useState<number | undefined>(values?.sol_no ? Number(values.sol_no) : undefined)
+    const [dsf, setDsf] = useState<number | undefined>(values?.dsf ? Number(values.dsf) : undefined)
+    const [isf, setIsf] = useState<number | undefined>(values?.isf ? Number(values.isf) : undefined)
+    const [tsf, setTsf] = useState<number | undefined>(values?.tsf ? Number(values.tsf) : undefined)
+    const [openess, setOpeness] = useState<string | undefined>(values?.openess ? String(values.openess) : undefined)
+    const [notes, setNotes] = useState<string | undefined>(values?.notes ? String(values.notes) : undefined)
 
     // save handler
     const saveHandler = () => {
