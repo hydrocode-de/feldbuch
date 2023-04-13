@@ -2,7 +2,7 @@ import { IonButton, IonInput, IonItem, IonLabel, IonList, IonSelect, IonSelectOp
 import { useState } from 'react'
 import { DataInputProps } from './DataInput.model'
 
-const DataInputG4: React.FC<DataInputProps> = ({ onSave }) => {
+const DataInputG4: React.FC<DataInputProps> = ({ onSave, values }) => {
     // component state
     const [pressure, setPressure] = useState<number>()
     const [t_collected, setTCollected] = useState<Date>()

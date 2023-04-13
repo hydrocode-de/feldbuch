@@ -2,7 +2,7 @@ import { IonButton, IonInput, IonItem, IonLabel, IonList, IonSelect, IonSelectOp
 import { useState } from 'react'
 import { DataInputProps } from './DataInput.model'
 
-const DataInputG2: React.FC<DataInputProps> = ({ onSave }) => {
+const DataInputG2: React.FC<DataInputProps> = ({ onSave, values }) => {
     // component state
     const [sol_no, setSolNo] = useState<number>()
     const [dsf, setDsf] = useState<number>()

@@ -2,7 +2,7 @@ import { IonButton, IonInput, IonItem, IonLabel, IonList, IonTextarea, IonToggle
 import { useState } from 'react'
 import { DataInputProps } from './DataInput.model'
 
-const DataInputG3: React.FC<DataInputProps> = ({ onSave }) => {
+const DataInputG3: React.FC<DataInputProps> = ({ onSave, values }) => {
     // component state
     const [dark_adapted, setDarkAdapted] = useState<boolean>(false)
     const [pam_no, setPamNo] = useState<number>()
