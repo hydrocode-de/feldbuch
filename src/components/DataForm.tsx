@@ -10,37 +10,41 @@ import DataInputG4 from "./DataInputG4";
 
 interface DataFormProps {
     plot_id: number,
+    defaults?: Dataset,
     onSave?: (data: Dataset) => void,
 }
 
-const DataForm: React.FC<DataFormProps> = ({plot_id, onSave }) => {
+const DataForm: React.FC<DataFormProps> = ({plot_id, defaults, onSave }) => {
     // component state
     const { group } = useDatasetFilter();
+
+    // the current group can be temporarily overwritten by the values
+    const groupId = defaults?.group_id || group?.id
 
     // save handler
     const saveHandler = (data: {[key: string]: number | string | Date | Boolean}) => {
         // create the object
-        const dataset: Dataset = {plot_id, data, group_id: group!.id}
+        const dataset: Dataset = {plot_id, data, group_id: defaults?.group_id || group!.id}
         onSave!(dataset)
     }
     
     // switch the form
     let form: any;
-    if (!group) {
+    if (!groupId) {
         return <IonItem><IonLabel style={{textAlign: 'center'}}>Please select the data type first</IonLabel></IonItem>
     }
-    switch (group.short_name) {
-        case 'g1':
-            form = <DataInputG1 onSave={saveHandler} />;
+    switch (groupId) {
+        case 1:
+            form = <DataInputG1 onSave={saveHandler} values={defaults?.data} />;
             break;
-        case 'g2':
-            form = <DataInputG2 onSave={saveHandler}/>;
+        case 2:
+            form = <DataInputG2 onSave={saveHandler} values={defaults?.data} />;
             break;
-        case 'g3':
-            form = <DataInputG3 onSave={saveHandler} />;
+        case 3:
+            form = <DataInputG3 onSave={saveHandler} values={defaults?.data} />;
             break;
-        case 'g4':
-            form = <DataInputG4 onSave={saveHandler} />;
+        case 4:
+            form = <DataInputG4 onSave={saveHandler} values={defaults?.data} />;
             break;
             
         default:
