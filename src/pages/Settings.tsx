@@ -5,6 +5,7 @@ import { useAuth } from "../supabase/auth"
 import { useFeldbuch } from "../supabase/feldbuch"
 
 import pack from '../../package.json'
+import { useSettings } from "../contexts/settings"
 
 const Settings: React.FC = () => {
     // load the local data 
@@ -12,6 +13,7 @@ const Settings: React.FC = () => {
     
     // load user data
     const { user } = useAuth()
+    const { user_id } = useSettings()
 
     return (
         <>
@@ -77,7 +79,11 @@ const Settings: React.FC = () => {
                         <IonLabel>User data</IonLabel>
                     </IonItem>
                     <IonList slot="content">
-                        { !user ? (<IonNote className="ion-padding">You are not logged in</IonNote>) : (<>
+                        { !user ? (
+                            <IonItem>
+                                <IonNote className="ion-padding">You are not logged in</IonNote>
+                            </IonItem>
+                        ) : (<>
                                <IonItem>
                                     <IonLabel slot="start">User ID</IonLabel>
                                     <IonLabel slot="end">{user.id}</IonLabel>
@@ -87,6 +93,17 @@ const Settings: React.FC = () => {
                                 <IonLabel slot="end">{user.email}</IonLabel>
                                </IonItem>
                             </>)}
+                        { user_id ? (
+                            <IonItem>
+                                <IonLabel slot="start">User ID (local)</IonLabel>
+                                <IonLabel slot="end">{user_id}</IonLabel>
+                            </IonItem>
+                        ) : (
+                            <IonItem>
+                                <IonNote className="ion-padding">No local user ID cached. Please log in.</IonNote>
+                            </IonItem>
+                            
+                        ) }
                     </IonList>
                 </IonAccordion>
             </IonAccordionGroup>
