@@ -7,11 +7,11 @@ import LoginButton from "../components/LoginButton";
 import OverviewMap from "../components/OverviewMap";
 import SyncButton from "../components/SyncButton";
 import { useDatasetFilter } from "../features/filter";
-import { useAuth } from "../supabase/auth";
 
 
 import { useFeldbuch } from "../supabase/feldbuch";
 import { Dataset, Plot } from "../supabase/feldbuch.model";
+import { useSettings } from "../contexts/settings";
 
 const ViewPlot: React.FC = () => {
     // define the component state
@@ -25,6 +25,8 @@ const ViewPlot: React.FC = () => {
     const { datasets, updates } = useFeldbuch();
     const { filteredPlots: plots } = useDatasetFilter();
 
+    // get the cached user_if from the settings
+    const { user_id } = useSettings()
 
     // load the correct plot and its data
     useEffect(() => {
@@ -114,7 +116,7 @@ const ViewPlot: React.FC = () => {
                 </IonCardContent></IonCard>
 
                 <IonFab vertical="bottom" horizontal="end" slot="fixed">
-                    <IonFabButton color="success" routerLink={`/list/${plot?.id}/add`} routerDirection="forward">
+                    <IonFabButton color="success" routerLink={`/list/${plot?.id}/add`} routerDirection="forward" disabled={!user_id}>
                         <IonIcon icon={add} />
                     </IonFabButton>
                 </IonFab>
