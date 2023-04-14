@@ -7,7 +7,6 @@ import LoginButton from "../components/LoginButton";
 import OverviewMap from "../components/OverviewMap";
 import SyncButton from "../components/SyncButton";
 import { useDatasetFilter } from "../features/filter";
-import { useAuth } from "../supabase/auth";
 
 
 import { useFeldbuch } from "../supabase/feldbuch";
@@ -41,7 +40,7 @@ const ViewPlot: React.FC = () => {
         setPlot(plot)
         setDatasetList(datasetList)
         setDataUpdateList(updatesList)
-    }, [plots, datasets, updates])
+    }, [plots, datasets, updates, params])
 
     return (
         <IonPage>
