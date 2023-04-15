@@ -2,16 +2,16 @@ import { IonButton, IonInput, IonItem, IonLabel, IonList, IonNote, IonSelect, Io
 import { useState } from 'react'
 import { DataInputProps } from './DataInput.model'
 
-const DataInputG1: React.FC<DataInputProps> = ({ onSave }) => {
+const DataInputG1: React.FC<DataInputProps> = ({ onSave, values }) => {
     // component state
-    const [height, setHeight] = useState<number>()
-    const [len, setLen] = useState<number>()
-    const [diameter, setDiameter] = useState<number>()
-    const [mortality, setMortality] = useState<string>()
-    const [browse, setBrowse] = useState<boolean>(false)
-    const [cause, setCause] = useState<string>()
-    const [lost, setLost] = useState<boolean>(false)
-    const [notes, setNotes] = useState<string>()
+    const [height, setHeight] = useState<number | undefined>(values?.height ? Number(values.height) : undefined)
+    const [len, setLen] = useState<number | undefined>(values?.length ? Number(values.length) : undefined)
+    const [diameter, setDiameter] = useState<number | undefined>(values?.diameter ? Number(values.diameter) : undefined)
+    const [mortality, setMortality] = useState<string | undefined>(values?.mortality ? String(values.mortality) : undefined)
+    const [browse, setBrowse] = useState<boolean>(values?.browse ? !!values.browse : false)
+    const [cause, setCause] = useState<string | undefined>(values?.cause ? String(values.cause) : undefined)
+    const [lost, setLost] = useState<boolean>(values?.lost ? !!values.lost : false)
+    const [notes, setNotes] = useState<string | undefined>(values?.notes ? String(values.notes) : undefined)
 
     // save handler
     const saveHandler = () => {

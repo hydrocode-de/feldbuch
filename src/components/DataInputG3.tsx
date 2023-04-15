@@ -2,16 +2,16 @@ import { IonButton, IonInput, IonItem, IonLabel, IonList, IonTextarea, IonToggle
 import { useState } from 'react'
 import { DataInputProps } from './DataInput.model'
 
-const DataInputG3: React.FC<DataInputProps> = ({ onSave }) => {
+const DataInputG3: React.FC<DataInputProps> = ({ onSave, values }) => {
     // component state
-    const [dark_adapted, setDarkAdapted] = useState<boolean>(false)
-    const [pam_no, setPamNo] = useState<number>()
-    const [f, setF] = useState<number>()
-    const [y, setY] = useState<number>()
-    const [m, setM] = useState<number>()
-    const [c, setC] = useState<number>()
-    const [l, setL] = useState<number>()
-    const [notes, setNotes] = useState<string>()
+    const [dark_adapted, setDarkAdapted] = useState<boolean>(values?.dark_adapted ? Boolean(values.dark_adapted) : false)
+    const [pam_no, setPamNo] = useState<number | undefined>(values?.pam_no ? Number(values.pam_no) : undefined)
+    const [f, setF] = useState<number | undefined>(values?.f ? Number(values.f) : undefined)
+    const [y, setY] = useState<number | undefined>(values?.y ? Number(values.y) : undefined)
+    const [m, setM] = useState<number | undefined>(values?.m ? Number(values.m) : undefined)
+    const [c, setC] = useState<number | undefined>(values?.c ? Number(values.c) : undefined)
+    const [l, setL] = useState<number | undefined>(values?.l ? Number(values.l) : undefined)
+    const [notes, setNotes] = useState<string | undefined>(values?.notes ? String(values.notes) : undefined)
 
     // save handler
     const saveHandler = () => {
