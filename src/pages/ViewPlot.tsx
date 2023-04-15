@@ -40,7 +40,7 @@ const ViewPlot: React.FC = () => {
         // update the component state
         setPlot(plot)
         setDatasetList(datasetList)
-    }, [plots, datasets, updates])
+    }, [plots, datasets, updates, params])
 
     return (
         <IonPage>

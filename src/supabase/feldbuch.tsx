@@ -240,28 +240,40 @@ export const FeldbuchProvider: React.FC<React.PropsWithChildren> = ({ children }
 
     const addDataset = (data: Dataset): Promise<void> => {
         return new Promise((resolve, reject) => {
-            if (user_id) {
-                // check if the plot exists
-                if (plots.map(p => p.id).includes(data.plot_id)) {
-                    // add this dataset to the stack
-                    const newDatasets = cloneDeep(dataUpdates)
-                    newDatasets.push({
-                        ...data,
-                        user_id: user_id,
-                        measurement_time: new Date()
-                    })
-
-                    // set the data
-                    localforage.setItem('updates', newDatasets).then(() => {
-                        setDataUpdates(newDatasets)
-                        resolve()
-                    })
-                } else {
-                    reject(`The bse plot dataset of ID ${data.plot_id} is not in local cache.`)
-                }
-            } else {
-                reject('User not logged in!')
+            if (!user_id) {
+                reject('You are not logged in and no user ID was cached from a previous session.')
             }
+
+            // check if the plot exists
+            if (!plots.map(p => p.id).includes(data.plot_id)) {
+                reject(`The bse plot dataset of ID ${data.plot_id} is not in local cache.`)
+            }
+            
+            // check if the year and group combination already exists
+            const existing = dataUpdates.filter(d => {
+                return (
+                    new Date(d.measurement_time!).getFullYear() === new Date().getFullYear() &&
+                    d.group_id === data.group_id &&
+                    d.plot_id === data.plot_id
+                ) 
+            })
+            if (existing.length > 0) {
+                reject(`There is already a dataset for this year, group and plot combination. Please edit the existing dataset instead.`)
+            }
+
+            // add this dataset to the stack
+            const newDatasets = cloneDeep(dataUpdates)
+            newDatasets.push({
+                ...data,
+                user_id: user_id,
+                measurement_time: new Date()
+            })
+
+            // set the data
+            localforage.setItem('updates', newDatasets).then(() => {
+                setDataUpdates(newDatasets)
+                resolve()
+            })
         })
     }
 

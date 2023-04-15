@@ -33,9 +33,12 @@ const AddUpdates: React.FC = () => {
     // save Handler
     const onSave = (data: Dataset) => {
         // add the dataset
-        addDataset!(data).then(() => {
+        addDataset!(data)
+        .then(() => {
             present({message: 'Your updates have been saved locally.', duration: 2000, position: 'top', color: 'success'})
             history.replace('/list')
+        }).catch(error => {
+            present({message: error, duration: 2000, position: 'top', color: 'danger'})
         })
     }
 

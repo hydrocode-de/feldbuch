@@ -32,12 +32,14 @@ const LoginButton: React.FC<IonButtonProps> = props => {
         { isLoggedIn ? ( 
             <>
                 <IonButton onClick={() => logout!().then(v => console.log(v))} {...props} >
-                    <IonIcon slot="icon-only" icon={logOutOutline} />
+                    {/* <IonIcon slot="icon-only" icon={logOutOutline} /> */}
+                    LOGOUT
                 </IonButton>
             </>
         ) : (
             <IonButton onClick={() => {history.push('/login')}} {...props} >
-                <IonIcon slot="icon-only" icon={logInOutline} />
+                {/* <IonIcon slot="icon-only" icon={logInOutline} /> */}
+                LOGIN
             </IonButton>
         )}
     </>
