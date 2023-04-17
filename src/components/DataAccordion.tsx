@@ -1,5 +1,5 @@
-import { IonAccordion, IonButton, IonButtons, IonIcon, IonItem, IonLabel, IonList, IonSpinner, IonTitle, IonToolbar } from "@ionic/react"
-import { pencil, close } from "ionicons/icons"
+import { IonAccordion, IonAlert, IonButton, IonButtons, IonIcon, IonItem, IonLabel, IonList, IonSpinner, IonTitle, IonToolbar } from "@ionic/react"
+import { pencil, close, trashOutline } from "ionicons/icons"
 import React, { useState } from "react"
 import { useFeldbuch } from "../supabase/feldbuch"
 import { Dataset } from "../supabase/feldbuch.model"
@@ -57,9 +57,21 @@ const DataAccordion: React.FC<DataAccordionProps> = ({ dataset, index, canUpdate
                     <IonTitle>Details</IonTitle>
                     { canUpdate && !isProcessing  ? (
                         <IonButtons slot="end">
-                            <IonButton fill="clear" slot="start" color={editMode ? 'danger' : 'warning'} onClick={toggleEditMode}>
+                            <IonButton fill="clear" color={editMode ? 'danger' : 'warning'} onClick={toggleEditMode}>
                                 <IonIcon icon={editMode ? close : pencil} slot="icon-only" />
-                            </IonButton>    
+                            </IonButton>
+                            <IonButton id="delete-update" fill="clear" color="danger">
+                                <IonIcon icon={trashOutline} slot="icon-only" />
+                            </IonButton>
+                            <IonAlert
+                                trigger="delete-update"
+                                title="Delete dataset"
+                                message="Are you sure you want to delete this dataset?"
+                                buttons={[
+                                    {text: 'Cancel', role: 'cancel'},
+                                    {text: 'Delete', role: 'destructive', handler: () => {console.log('delete')}}
+                                ]}
+                            />
                         </IonButtons>
                     ) : null }
                     { isProcessing ? (
