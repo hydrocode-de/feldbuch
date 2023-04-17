@@ -1,4 +1,4 @@
-import { IonButton, IonInput, IonItem, IonLabel, IonList, IonNote, IonSelect, IonSelectOption, IonTextarea, IonToggle } from '@ionic/react'
+import { IonButton, IonInput, IonItem, IonList, IonNote, IonSelect, IonSelectOption, IonTextarea, IonToggle } from '@ionic/react'
 import { useState } from 'react'
 import { DataInputProps } from './DataInput.model'
 
