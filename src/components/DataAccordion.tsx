@@ -17,7 +17,7 @@ const DataAccordion: React.FC<DataAccordionProps> = ({ dataset, index, canUpdate
     const [isProcessing, setIsProcessing] = useState<boolean>(false)
 
     // load the datagroups
-    const { dataGroups, updateDataset } = useFeldbuch()
+    const { dataGroups, updateDataset, deleteDataset } = useFeldbuch()
 
     const refDate = new Date(dataset.measurement_time ? dataset.measurement_time : '1970-01-01')
     
@@ -45,6 +45,17 @@ const DataAccordion: React.FC<DataAccordionProps> = ({ dataset, index, canUpdate
         )
     }
 
+    // add the handler for deleting a dataset
+    const onDelete = () => {
+        // set processing
+        setIsProcessing(true)
+
+        // delete the dataset
+        deleteDataset!(index).then(() => {
+            setIsProcessing(false)
+        })
+    }
+
     return (
         <IonAccordion value={String(index)}>
             <IonItem slot="header" color="light">
@@ -60,16 +71,16 @@ const DataAccordion: React.FC<DataAccordionProps> = ({ dataset, index, canUpdate
                             <IonButton fill="clear" color={editMode ? 'danger' : 'warning'} onClick={toggleEditMode}>
                                 <IonIcon icon={editMode ? close : pencil} slot="icon-only" />
                             </IonButton>
-                            <IonButton id="delete-update" fill="clear" color="danger">
+                            <IonButton id={`delete-update_${index}`} fill="clear" color="danger">
                                 <IonIcon icon={trashOutline} slot="icon-only" />
                             </IonButton>
                             <IonAlert
-                                trigger="delete-update"
+                                trigger={`delete-update_${index}`}
                                 title="Delete dataset"
                                 message="Are you sure you want to delete this dataset?"
                                 buttons={[
                                     {text: 'Cancel', role: 'cancel'},
-                                    {text: 'Delete', role: 'destructive', handler: () => {console.log('delete')}}
+                                    {text: 'Delete', role: 'destructive', handler: onDelete}
                                 ]}
                             />
                         </IonButtons>
