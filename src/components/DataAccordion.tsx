@@ -1,5 +1,5 @@
-import { IonAccordion, IonButton, IonButtons, IonIcon, IonItem, IonLabel, IonList, IonSpinner, IonTitle, IonToolbar } from "@ionic/react"
-import { pencil, close } from "ionicons/icons"
+import { IonAccordion, IonAlert, IonButton, IonButtons, IonIcon, IonItem, IonLabel, IonList, IonSpinner, IonTitle, IonToolbar } from "@ionic/react"
+import { pencil, close, trashOutline } from "ionicons/icons"
 import React, { useState } from "react"
 import { useFeldbuch } from "../supabase/feldbuch"
 import { Dataset } from "../supabase/feldbuch.model"
@@ -17,7 +17,7 @@ const DataAccordion: React.FC<DataAccordionProps> = ({ dataset, index, canUpdate
     const [isProcessing, setIsProcessing] = useState<boolean>(false)
 
     // load the datagroups
-    const { dataGroups, updateDataset } = useFeldbuch()
+    const { dataGroups, updateDataset, deleteDataset } = useFeldbuch()
 
     const refDate = new Date(dataset.measurement_time ? dataset.measurement_time : '1970-01-01')
     
@@ -45,6 +45,17 @@ const DataAccordion: React.FC<DataAccordionProps> = ({ dataset, index, canUpdate
         )
     }
 
+    // add the handler for deleting a dataset
+    const onDelete = () => {
+        // set processing
+        setIsProcessing(true)
+
+        // delete the dataset
+        deleteDataset!(index).then(() => {
+            setIsProcessing(false)
+        })
+    }
+
     return (
         <IonAccordion value={String(index)}>
             <IonItem slot="header" color="light">
@@ -57,9 +68,21 @@ const DataAccordion: React.FC<DataAccordionProps> = ({ dataset, index, canUpdate
                     <IonTitle>Details</IonTitle>
                     { canUpdate && !isProcessing  ? (
                         <IonButtons slot="end">
-                            <IonButton fill="clear" slot="start" color={editMode ? 'danger' : 'warning'} onClick={toggleEditMode}>
+                            <IonButton fill="clear" color={editMode ? 'danger' : 'warning'} onClick={toggleEditMode}>
                                 <IonIcon icon={editMode ? close : pencil} slot="icon-only" />
-                            </IonButton>    
+                            </IonButton>
+                            <IonButton id={`delete-update_${index}`} fill="clear" color="danger">
+                                <IonIcon icon={trashOutline} slot="icon-only" />
+                            </IonButton>
+                            <IonAlert
+                                trigger={`delete-update_${index}`}
+                                title="Delete dataset"
+                                message="Are you sure you want to delete this dataset?"
+                                buttons={[
+                                    {text: 'Cancel', role: 'cancel'},
+                                    {text: 'Delete', role: 'destructive', handler: onDelete}
+                                ]}
+                            />
                         </IonButtons>
                     ) : null }
                     { isProcessing ? (
