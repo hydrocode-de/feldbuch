@@ -1,4 +1,4 @@
-import { IonBadge, IonButton, IonButtons, IonContent, IonHeader, IonIcon, IonItem, IonLabel, IonList, IonMenuButton, IonModal, IonPage, IonSegment, IonSegmentButton, IonSelect, IonSelectOption, IonSpinner, IonTextarea, IonTitle, IonToggle, IonToolbar } from "@ionic/react"
+import { IonButton, IonButtons, IonContent, IonHeader, IonIcon, IonItem, IonLabel, IonList, IonMenuButton, IonModal, IonPage, IonSegment, IonSegmentButton, IonSelect, IonSelectOption, IonTitle, IonToggle, IonToolbar } from "@ionic/react"
 import { filter, download } from 'ionicons/icons';
 
 import ReactJson from 'react-json-view';
@@ -65,7 +65,7 @@ const DataExport: React.FC = () => {
         setRecords(recs)
 
         // console.log(recs)
-    }, [datasets, plots, years, withData])
+    }, [datasets, plots, years, withData, availableYears])
 
     // destruct records to CSV
     useEffect(() => {

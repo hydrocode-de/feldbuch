@@ -1,4 +1,4 @@
-import { IonAccordion, IonAccordionGroup, IonBadge, IonButton, IonButtons, IonContent, IonHeader, IonItem, IonLabel, IonList, IonListHeader, IonMenuButton, IonNote, IonPage, IonTitle, IonToolbar } from "@ionic/react"
+import { IonAccordion, IonAccordionGroup, IonBadge, IonButton, IonButtons, IonContent, IonHeader, IonItem, IonLabel, IonList, IonMenuButton, IonNote, IonPage, IonTitle, IonToolbar } from "@ionic/react"
 import MainMenu from "../components/MainMenu"
 import SyncButton from "../components/SyncButton"
 import { useAuth } from "../supabase/auth"
